@@ -1,50 +1,30 @@
 package gl.shaders;
 
 import gl.glUtils.ShaderControls;
-import java.io.FileNotFoundException;
-import java.nio.FloatBuffer;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix4f;
 
-public class SimpleDepthShader
+public class SimpleDepthShader extends AbstractShader
 {
 
-    private static final FloatBuffer uniformBuffer = BufferUtils.createFloatBuffer(16);
-    private static final Matrix4f SHARED_VIEW_TRANSFORM = SharedShaderObjects.SHARED_VIEW_TRANSFORM;
-    private static final Matrix4f SHARED_MODEL_TRANSFORM = SharedShaderObjects.SHARED_MODEL_TRANSFORM;
-    private static final String vertex = "SimpleDepthVertex.shader";
-    private static final String fragment = "SimpleDepthFragment.shader";
-    private static int vertexShader, fragmentShader;
-    private static int shaderProgram;
+    private static SimpleDepthShader instance;
     private static int projectionUniform;
     private static int viewUniform;
     private static int modelUniform;
 
-    static void load() throws FileNotFoundException
+    SimpleDepthShader()
     {
-        vertexShader = ShaderControls.generateVertexShader();
-        ShaderControls.createShaderFrom(vertexShader, ShaderLoader.loadFile(vertex));
-
-        fragmentShader = ShaderControls.generateFragmentShader();
-        ShaderControls.createShaderFrom(fragmentShader, ShaderLoader.loadFile(fragment));
-
-        shaderProgram = ShaderControls.createShaderProgram(vertexShader, fragmentShader);
-        ShaderControls.bindFragmentLocation(shaderProgram, 0, "outColor");
-
-        ShaderControls.link(shaderProgram);
-        ShaderControls.use(shaderProgram);
-
-        setupUniforms();
+        instance = this;
     }
 
-    private static void setupUniforms()
+    @Override
+    protected void setupUniforms()
     {
         projectionUniform = ShaderControls.createUniform(shaderProgram, "proj");
         viewUniform = ShaderControls.createUniform(shaderProgram, "view");
         modelUniform = ShaderControls.createUniform(shaderProgram, "model");
     }
 
-    public static void updateModelUniform()
+    public void updateModelUniform()
     {
         uniformBuffer.clear();
         SHARED_MODEL_TRANSFORM.store(uniformBuffer);
@@ -52,7 +32,7 @@ public class SimpleDepthShader
         ShaderControls.setUniformMatrix(modelUniform, uniformBuffer);
     }
 
-    public static void setupProjection(Matrix4f matrix)
+    public void setupProjection(Matrix4f matrix)
     {
         uniformBuffer.clear();
         matrix.store(uniformBuffer);
@@ -60,7 +40,7 @@ public class SimpleDepthShader
         ShaderControls.setUniformMatrix(projectionUniform, uniformBuffer);
     }
 
-    public static void updateViewUniform()
+    public void updateViewUniform()
     {
         uniformBuffer.clear();
         SHARED_VIEW_TRANSFORM.store(uniformBuffer);
@@ -68,13 +48,20 @@ public class SimpleDepthShader
         ShaderControls.setUniformMatrix(viewUniform, uniformBuffer);
     }
 
-    public static int getProgram()
+    public static SimpleDepthShader shader()
     {
-        return shaderProgram;
+        return instance;
     }
 
-    public static void activate()
+    @Override
+    protected String getVertexName()
     {
-        ShaderControls.use(shaderProgram);
+        return "SimpleDepthVertex.shader";
+    }
+
+    @Override
+    protected String getFragmentName()
+    {
+        return "SimpleDepthFragment.shader";
     }
 }

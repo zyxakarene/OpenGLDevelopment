@@ -5,8 +5,9 @@ import gl.models.ElementBuffer;
 import gl.glUtils.ShaderControls;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
-import gl.shaders.ShaderLoader;
 import gl.shaders.SharedShaderObjects;
+import gl.shaders.ShaderLoader;
+import gl.shaders.ShaderType;
 import gl.shaders.SimpleDepthShader;
 import gl.shaders.TransformShader;
 import utils.interfaces.IShadowable;
@@ -30,20 +31,20 @@ public class TransformModel extends ElementBuffer implements IShadowable
     @Override
     protected void setup()
     {
-        int positionAttribute = ShaderControls.createAttribute(TransformShader.getProgram(), "position");
+        int positionAttribute = ShaderControls.createAttribute(TransformShader.shader().getProgram(), "position");
         ShaderControls.assignAtribute(positionAttribute, 3, 8, 0);
         //3 components, for X, Y and Z
         //8 stride, for 8 floats per vertex
         //0 offset, for starts at 0
 
-        int textureAttribute = ShaderControls.createAttribute(TransformShader.getProgram(), "texcoord");
+        int textureAttribute = ShaderControls.createAttribute(TransformShader.shader().getProgram(), "texcoord");
         ShaderControls.enableTextureAttrib(textureAttribute);
         ShaderControls.assignAtribute(textureAttribute, 2, 8, 3);
         //2 components, for U and V
         //8 stride, for 8 floats per vertex
         //3 offset, for starts at 3
         
-        int normalAttribute = ShaderControls.createAttribute(TransformShader.getProgram(), "normal");
+        int normalAttribute = ShaderControls.createAttribute(TransformShader.shader().getProgram(), "normal");
         ShaderControls.assignAtribute(normalAttribute, 3, 8, 5);
         //3 components, for X, Y and Z
         //8 stride, for 8 floats per vertex
@@ -54,20 +55,20 @@ public class TransformModel extends ElementBuffer implements IShadowable
     
     private void setupForShadows()
     {
-        int positionAttribute = ShaderControls.createAttribute(SimpleDepthShader.getProgram(), "position");
+        int positionAttribute = ShaderControls.createAttribute(SimpleDepthShader.shader().getProgram(), "position");
         ShaderControls.assignAtribute(positionAttribute, 3, 8, 0);
         //3 components, for X, Y and Z
         //8 stride, for 8 floats per vertex
         //0 offset, for starts at 0
         
-        int textureAttribute = ShaderControls.createAttribute(SimpleDepthShader.getProgram(), "texcoord");
+        int textureAttribute = ShaderControls.createAttribute(SimpleDepthShader.shader().getProgram(), "texcoord");
         ShaderControls.enableTextureAttrib(textureAttribute);
         ShaderControls.assignAtribute(textureAttribute, 2, 8, 3);
         //2 components, for U and V
         //8 stride, for 8 floats per vertex
         //3 offset, for starts at 3
         
-        int normalAttribute = ShaderControls.createAttribute(SimpleDepthShader.getProgram(), "normal");
+        int normalAttribute = ShaderControls.createAttribute(SimpleDepthShader.shader().getProgram(), "normal");
         ShaderControls.assignAtribute(normalAttribute, 3, 8, 5);
         //3 components, for X, Y and Z
         //8 stride, for 8 floats per vertex
@@ -77,9 +78,9 @@ public class TransformModel extends ElementBuffer implements IShadowable
     @Override
     public void draw()
     {
-        ShaderLoader.activateShader(TransformShader.class);
+        ShaderLoader.activateShader(ShaderType.TRANSFORM);
         doTransformation();
-        TransformShader.updateModelUniform();
+        TransformShader.shader().updateModelUniform();
         super.draw();
     }
 
@@ -101,9 +102,9 @@ public class TransformModel extends ElementBuffer implements IShadowable
     @Override
     public void drawShadow()
     {
-        ShaderLoader.activateShader(SimpleDepthShader.class);
+        ShaderLoader.activateShader(ShaderType.DEBTH);
         doTransformation();
-        SimpleDepthShader.updateModelUniform();
+        SimpleDepthShader.shader().updateModelUniform();
         super.draw();
     }
 }

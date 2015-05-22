@@ -5,8 +5,6 @@ import gl.glUtils.GLUtils;
 import gl.lighting.Shadow;
 import gl.models.ModelManager;
 import gl.shaders.ShaderLoader;
-import gl.shaders2.ShaderLoader2;
-import gl.shaders2.ShaderType;
 import gl.textures.TextureManager;
 import java.io.IOException;
 import org.lwjgl.LWJGLException;
@@ -33,8 +31,6 @@ public class SetupCommand implements ICommand
             
             setupLwjgl();
             setupGameResources();
-            
-            ShaderLoader2.loadShaders();
         }
         catch (LWJGLException | IOException ex)
         {
@@ -56,8 +52,6 @@ public class SetupCommand implements ICommand
         Keyboard.create();
 
         GLUtils.enableGLSettings();
-        
-         Camera.create(new Vector3f(4f, 8f, -9f), new Vector3f(-90, 0, 0), GameConstants.GAME_WIDTH, GameConstants.GAME_HEIGHT);
     }
 
     private void setupGameResources() throws IOException
@@ -65,6 +59,8 @@ public class SetupCommand implements ICommand
         ShaderLoader.loadShaders();
         TextureManager.initTextures();
         ModelManager.loadAllTiles();
+        
+        Camera.create(new Vector3f(4f, 8f, -9f), new Vector3f(-90, 0, 0), GameConstants.GAME_WIDTH, GameConstants.GAME_HEIGHT);
         
         Shadow.setup(GameConstants.GAME_WIDTH, GameConstants.GAME_HEIGHT);
     }

@@ -4,9 +4,7 @@
  */
 package main;
 
-import game.camera.Camera;
 import gl.lighting.Shadow;
-import gl.shaders.TransformShader;
 
 /**
  *

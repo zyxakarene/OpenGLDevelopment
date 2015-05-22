@@ -8,6 +8,7 @@ import gl.glUtils.BufferControls;
 import gl.lighting.Shadow;
 import gl.shaders.HudShader;
 import gl.shaders.ShaderLoader;
+import gl.shaders.ShaderType;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
@@ -84,7 +85,7 @@ public class Hud
 
         
         // Specify the layout of the vertex data
-        int posAttrib = glGetAttribLocation(HudShader.getProgram(), "position");
+        int posAttrib = glGetAttribLocation(HudShader.shader().getProgram(), "position");
         glEnableVertexAttribArray(posAttrib);
         glVertexAttribPointer(posAttrib, 2, GL_FLOAT, false, (Float.SIZE / 8) * 4, 0);
 
@@ -92,7 +93,7 @@ public class Hud
 //        glEnableVertexAttribArray(colAttrib);
 //        glVertexAttribPointer(colAttrib, 3, GL_FLOAT, false, (Float.SIZE / 8) * 7, (Float.SIZE / 8) * 2);
 
-        int texAttrib = glGetAttribLocation(HudShader.getProgram(), "texcoord");
+        int texAttrib = glGetAttribLocation(HudShader.shader().getProgram(), "texcoord");
         glEnableVertexAttribArray(texAttrib);
         glVertexAttribPointer(texAttrib, 2, GL_FLOAT, false, (Float.SIZE / 8) * 4, (Float.SIZE / 8) * 2);
         
@@ -103,7 +104,7 @@ public class Hud
 
     public static void draw()
     {
-        ShaderLoader.activateShader(HudShader.class);
+        ShaderLoader.activateShader(ShaderType.HUD);
         Shadow.bindTexture();
         glDisable(GL_CULL_FACE);
 

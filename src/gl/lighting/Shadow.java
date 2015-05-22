@@ -2,8 +2,9 @@ package gl.lighting;
 
 import gl.glUtils.BufferControls;
 import gl.glUtils.GLUtils;
-import gl.shaders.ShaderLoader;
 import gl.shaders.SharedShaderObjects;
+import gl.shaders.ShaderLoader;
+import gl.shaders.ShaderType;
 import gl.shaders.SimpleDepthShader;
 import gl.shaders.TransformShader;
 import org.lwjgl.opengl.GL11;
@@ -28,15 +29,15 @@ public class Shadow
 
     public static void setup(int width, int height)
     {
-        ShaderLoader.activateShader(SimpleDepthShader.class);
+        ShaderLoader.activateShader(ShaderType.DEBTH);
         Matrix4f projectionView = orthographic(width, height, 0.01f, 100f);
-        SimpleDepthShader.setupProjection(projectionView);
+        SimpleDepthShader.shader().setupProjection(projectionView);
 
-        ShaderLoader.activateShader(TransformShader.class);
-        TransformShader.setupLightProjection(projectionView);
+        ShaderLoader.activateShader(ShaderType.TRANSFORM);
+        TransformShader.shader().setupLightProjection(projectionView);
         setupView();
 
-        ShaderLoader.activateShader(SimpleDepthShader.class);
+        ShaderLoader.activateShader(ShaderType.DEBTH);
 
         buffer = BufferControls.generateFrameBuffer();
         BufferControls.bindFrameBuffer(buffer);
@@ -63,7 +64,7 @@ public class Shadow
             shouldRemap = false;
             setupView();
         }
-        
+        GL11.glDisable(GL11.GL_CULL_FACE);
         GLUtils.cullFront();
         BufferControls.bindFrameBuffer(buffer);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
@@ -71,6 +72,7 @@ public class Shadow
 
     public static void end()
     {
+        GL11.glEnable(GL11.GL_CULL_FACE);
         GLUtils.cullBack();
         BufferControls.bindFrameBuffer(0);
     }
@@ -94,11 +96,11 @@ public class Shadow
         float dZ = (float) (Math.cos(Math.toRadians(pitchC))) * 0.1f;
         viewMatrix.translate(new Vector3f(-dX * moveMultiplier, -dY * moveMultiplier, dZ * moveMultiplier));
 
-        ShaderLoader.activateShader(SimpleDepthShader.class);
-        SimpleDepthShader.updateViewUniform();
+        ShaderLoader.activateShader(ShaderType.DEBTH);
+        SimpleDepthShader.shader().updateViewUniform();
 
-        ShaderLoader.activateShader(TransformShader.class);
-        TransformShader.updateLightViewUniform();
+        ShaderLoader.activateShader(ShaderType.TRANSFORM);
+        TransformShader.shader().updateLightViewUniform();
 //        TransformShader.setLightDirection(pitchC, yawC, rollC);
     }
 

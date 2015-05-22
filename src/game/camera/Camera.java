@@ -1,10 +1,11 @@
 package game.camera;
 
 import game.control.ElapsedTime;
-import gl.shaders.ShaderLoader;
 import gl.shaders.SharedShaderObjects;
-//import gl.shaders.SimpleDepthShader;
+import gl.shaders.ShaderLoader;
+import gl.shaders.ShaderType;
 import gl.shaders.TransformShader;
+//import gl.shaders.SimpleDepthShader;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Matrix4f;
@@ -58,9 +59,9 @@ public class Camera
         screenWidth = aWidth;
         screenHeight = aHeight;
 
-        ShaderLoader.activateShader(TransformShader.class);
+        ShaderLoader.activateShader(ShaderType.TRANSFORM);
         Matrix4f projectionView = perspective(70f, screenWidth / screenHeight, 0.01f, 2f);
-        TransformShader.setupProjection(projectionView);
+        TransformShader.shader().setupProjection(projectionView);
     }
 
     public static void move(int direction)
@@ -138,10 +139,10 @@ public class Camera
 
     public static void look()
     {
-        ShaderLoader.activateShader(TransformShader.class);
+        ShaderLoader.activateShader(ShaderType.TRANSFORM);
         updateView();
-        TransformShader.updateViewUniform();
-        TransformShader.setViewPos(-x, -y, -z);
+        TransformShader.shader().updateViewUniform();
+        TransformShader.shader().setViewPos(-x, -y, -z);
 
         if (!isPerspective)
         {
@@ -159,20 +160,12 @@ public class Camera
         if (Mouse.isButtonDown(0))
         {
             Matrix4f projectionView = perspective(70f, screenWidth / screenHeight, 0.01f, 2f);
-            TransformShader.setupProjection(projectionView);
+            TransformShader.shader().setupProjection(projectionView);
         }
         else if (Mouse.isButtonDown(1) || !isPerspective)
         {
-            System.out.println(x);
-            System.out.println(y);
-            System.out.println(z);
-            System.out.println(pitch);
-            System.out.println(yaw);
-            System.out.println(roll);
-            System.out.println("----");
-            
             Matrix4f projectionView = orthographic(screenWidth * orthoZoom, screenHeight * orthoZoom, 0.01f, 100f);
-            TransformShader.setupProjection(projectionView);
+            TransformShader.shader().setupProjection(projectionView);
         }
     }
 

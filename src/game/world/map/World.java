@@ -85,12 +85,8 @@ public class World implements IDrawable, IUpdateable
         {
             for (int j = 0; j < tiles[i].length; j++)
             {
-                tiles[i][j].changeYaw(0.1f * ElapsedTime.get());
+//                tiles[i][j].changeYaw(0.1f * ElapsedTime.get());
             }
-        }
-        for (int i = 0; i < tiles.length; i++)
-        {
-//            tiles[i].
         }
     }
 }

@@ -1,4 +1,4 @@
-package gl.shaders2;
+package gl.shaders;
 
 import gl.glUtils.ShaderControls;
 import gl.shaders.SharedShaderObjects;
@@ -18,6 +18,10 @@ public abstract class AbstractShader
     protected int vertexShader, fragmentShader;
     protected int shaderProgram;
 
+    AbstractShader()
+    {
+    }
+
     final void load() throws FileNotFoundException
     {
         vertexShader = ShaderControls.generateVertexShader();
@@ -32,13 +36,19 @@ public abstract class AbstractShader
         ShaderControls.link(shaderProgram);
         ShaderControls.use(shaderProgram);
 
-        postLoading();
         setupUniforms();
+        postLoading();
     }
 
-    protected abstract void postLoading();
+    protected void postLoading()
+    {
+        
+    }
 
-    protected abstract void setupUniforms();
+    protected void setupUniforms()
+    {
+        
+    }
 
     protected abstract String getVertexName();
 
@@ -47,6 +57,11 @@ public abstract class AbstractShader
     final void activate()
     {
         ShaderControls.use(shaderProgram);
+    }
+    
+    public final int getProgram()
+    {
+        return shaderProgram;
     }
 
     private static String loadFile(String name) throws FileNotFoundException

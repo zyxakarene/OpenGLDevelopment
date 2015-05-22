@@ -1,80 +1,40 @@
 package gl.shaders;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Method;
-import java.util.Scanner;
+import java.util.HashMap;
 
 public class ShaderLoader
 {
 
-    private static int currentShaderProgram;
+    private static final HashMap<ShaderType, AbstractShader> shaderMap = new HashMap<>();
+    private static ShaderType currentShader;
 
     public static void loadShaders() throws FileNotFoundException
     {
-        HudShader.load();
-        SimpleDepthShader.load();
-        TransformShader.load();
+        AbstractShader transformShader = new TransformShader();
+        transformShader.load();
+        
+        AbstractShader depthShader = new SimpleDepthShader();
+        depthShader.load();
+        
+        AbstractShader hudShader = new HudShader();
+        hudShader.load();
+        
+        AbstractShader clickShader = new ClickShader();
+        clickShader.load();
+
+        shaderMap.put(ShaderType.TRANSFORM, transformShader);
+        shaderMap.put(ShaderType.DEBTH, depthShader);
+        shaderMap.put(ShaderType.HUD, hudShader);
+        shaderMap.put(ShaderType.CLICK, clickShader);
     }
 
-    public static void activateShader(Class shaderClass)
+    public static void activateShader(ShaderType shader)
     {
-        int classProgram = getShaderFrom(shaderClass);
-
-        if (classProgram != currentShaderProgram)
+        if (currentShader != shader)
         {
-            activateProgramFrom(shaderClass);
-            currentShaderProgram = classProgram;
-        }
-    }
-
-    public static int getCurrentShader()
-    {
-        return currentShaderProgram;
-    }
-
-    static String loadFile(String name) throws FileNotFoundException
-    {
-        StringBuilder builder = new StringBuilder();
-
-        File file = new File("src/gl/shaders/source/" + name);
-
-        Scanner scan = new Scanner(file);
-
-        while (scan.hasNextLine())
-        {
-            builder.append(scan.nextLine());
-            builder.append("\n");
-        }
-
-        return builder.toString();
-    }
-
-    private static int getShaderFrom(Class shaderClass)
-    {
-        try
-        {
-            Method method = shaderClass.getMethod("getProgram");
-            return (int) method.invoke(null);
-        }
-        catch (Exception ex)
-        {
-            String msg = "Could not retrieve shader from class '%s'";
-            throw new RuntimeException(String.format(msg, shaderClass), ex);
-        }
-    }
-
-    private static void activateProgramFrom(Class shaderClass)
-    {
-        try
-        {
-            Method method = shaderClass.getMethod("activate");
-            method.invoke(null);
-        }
-        catch (Exception ex)
-        {
-            String msg = "Could not activate ShaderProgram from class '%s'";
-            throw new RuntimeException(String.format(msg, shaderClass), ex);
+            currentShader = shader;
+            shaderMap.get(shader).activate();
         }
     }
 }

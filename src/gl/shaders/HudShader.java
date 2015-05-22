@@ -1,43 +1,44 @@
 package gl.shaders;
 
 import gl.glUtils.ShaderControls;
-import java.io.FileNotFoundException;
 
-public class HudShader
+public class HudShader extends AbstractShader
 {
 
-    private static final String vertex = "HudVertex.shader";
-    private static final String fragment = "HudFragment.shader";
-    
-    private static int vertexShader, fragmentShader;
-    private static int shaderProgram;
+    private static HudShader instance;
+    private int shadowMap;
 
-    static void load() throws FileNotFoundException
+    HudShader()
     {
-        vertexShader = ShaderControls.generateVertexShader();
-        ShaderControls.createShaderFrom(vertexShader, ShaderLoader.loadFile(vertex));
+        instance = this;
+    }
+    
+    @Override
+    protected void setupUniforms()
+    {
+        shadowMap = ShaderControls.createUniform(shaderProgram, "shadowMap");
+    }
 
-        fragmentShader = ShaderControls.generateFragmentShader();
-        ShaderControls.createShaderFrom(fragmentShader, ShaderLoader.loadFile(fragment));
-
-        shaderProgram = ShaderControls.createShaderProgram(vertexShader, fragmentShader);
-        ShaderControls.bindFragmentLocation(shaderProgram, 0, "outColor");
-
-        ShaderControls.link(shaderProgram);
-        ShaderControls.use(shaderProgram);
-        
-        int shadowMap = ShaderControls.createUniform(shaderProgram, "shadowMap");
-                
+    @Override
+    protected void postLoading()
+    {
         ShaderControls.setUniform1I(shadowMap, 1);
-    }
+    } 
     
-    public static int getProgram()
+    public static HudShader shader()
     {
-        return shaderProgram;
+        return instance;
     }
-    
-    public static void activate()
+
+    @Override
+    protected String getVertexName()
     {
-        ShaderControls.use(shaderProgram);
+        return "HudVertex.shader";
+    }
+
+    @Override
+    protected String getFragmentName()
+    {
+        return "HudFragment.shader";
     }
 }

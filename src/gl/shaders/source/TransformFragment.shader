@@ -79,7 +79,7 @@ void main()
     textureColor.b = textureColor.b * lightColor.b;
 
     float shadow = ShadowCalculation(FragPosLightSpace); 
-
+    
     vec3 result = (ambient + (1.0 - shadow) * (diffuse + specular)) *  vec3(textureColor.r, textureColor.g, textureColor.b);
     outColor = vec4(result, 1.0);
 

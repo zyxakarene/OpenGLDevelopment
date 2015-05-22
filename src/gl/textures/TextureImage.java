@@ -1,7 +1,8 @@
 package gl.textures;
 
 import gl.glUtils.BufferControls;
-import java.awt.Color;
+import gl.shaders.ShaderLoader;
+import gl.shaders.ShaderType;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import org.lwjgl.opengl.GL11;
@@ -31,6 +32,7 @@ class TextureImage
     {
         if (currentTexture != texture)
         {
+            ShaderLoader.activateShader(ShaderType.TRANSFORM);
             BufferControls.activeTexture(0);
             texture.bind();
             currentTexture = texture;
