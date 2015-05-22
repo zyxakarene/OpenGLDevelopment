@@ -1,6 +1,7 @@
 package gl.textures;
 
 import gl.glUtils.BufferControls;
+import gl.glUtils.GLUtils;
 import gl.shaders.ShaderLoader;
 import gl.shaders.ShaderType;
 import java.awt.image.BufferedImage;
@@ -36,6 +37,7 @@ class TextureImage
             BufferControls.activeTexture(0);
             texture.bind();
             currentTexture = texture;
+            GLUtils.errorCheck();
         }
     }
 }

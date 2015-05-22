@@ -40,9 +40,7 @@ public abstract class ElementBuffer extends AbstractModel
     {
         BufferControls.bindVAO(vao);
         BufferControls.bindEBO(ebo);
-
         GL11.glDrawElements(GL11.GL_TRIANGLES, elementCount, GL11.GL_UNSIGNED_INT, 0);
-        
         clearBinds();
     }
 }

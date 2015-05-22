@@ -36,6 +36,7 @@ public class Main
             world.draw();
 
             FPSCounter.updateFPS();
+            
             gl.glUtils.GLUtils.errorCheck();
             Controls.checkKeys();
         }

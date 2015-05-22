@@ -20,8 +20,7 @@ public class Controls
             Mouse.destroy();
             System.exit(0);
         }
-
-
+        
         int dy = Mouse.getDY();
         int dx = Mouse.getDX();
 

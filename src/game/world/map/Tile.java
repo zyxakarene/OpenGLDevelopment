@@ -1,5 +1,6 @@
 package game.world.map;
 
+import game.control.clicker.ClickRegistrator;
 import game.world.basic.GameEntity;
 import utils.constants.TextureConstants;
 import utils.constants.TileTypes;
@@ -12,9 +13,9 @@ public class Tile extends GameEntity
 
     public Tile(int tileType)
     {
-        {
-            setModel(TileTypes.idToName(tileType));
-        }
+        setModel(TileTypes.idToName(tileType));
         setTexture(TextureConstants.TILES);
+        
+        ClickRegistrator.register(this);
     }
 }

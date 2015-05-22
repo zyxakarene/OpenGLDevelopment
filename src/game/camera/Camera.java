@@ -1,17 +1,17 @@
 package game.camera;
 
 import game.control.ElapsedTime;
+import gl.shaders.ClickShader;
 import gl.shaders.SharedShaderObjects;
 import gl.shaders.ShaderLoader;
 import gl.shaders.ShaderType;
 import gl.shaders.TransformShader;
-//import gl.shaders.SimpleDepthShader;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Matrix4f;
+import utils.FloatMath;
 
 import static org.lwjgl.opengl.GL11.*;
-import utils.FloatMath;
 
 public class Camera
 {
@@ -39,9 +39,9 @@ public class Camera
 
     public static Vector3f getDir()
     {
-        float dX = (float) (Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch + 90))) * 10.5f;
-        float dY = (float) (Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch + 90))) * 10.5f;
-        float dZ = (float) (Math.cos(Math.toRadians(pitch))) * 10.5f;
+        float dX = FloatMath.sin(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90)) * 10.5f;
+        float dY = FloatMath.cos(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90)) * 10.5f;
+        float dZ = FloatMath.cos(FloatMath.toRadians(pitch)) * 10.5f;
 
         Vector3f f = new Vector3f(-(x - dX), -(y - dY), -(z + dZ));
         return f;
@@ -59,9 +59,8 @@ public class Camera
         screenWidth = aWidth;
         screenHeight = aHeight;
 
-        ShaderLoader.activateShader(ShaderType.TRANSFORM);
         Matrix4f projectionView = perspective(70f, screenWidth / screenHeight, 0.01f, 2f);
-        TransformShader.shader().setupProjection(projectionView);
+        updateProjection(projectionView);
     }
 
     public static void move(int direction)
@@ -113,7 +112,7 @@ public class Camera
     {
         float multiplier = ElapsedTime.get() * 0.008f;
         amount.scale(multiplier);
-        
+
         pitch = pitch + amount.x;
         roll = roll + amount.y;
         yaw = yaw + amount.z;
@@ -139,10 +138,14 @@ public class Camera
 
     public static void look()
     {
-        ShaderLoader.activateShader(ShaderType.TRANSFORM);
         updateView();
+
+        ShaderLoader.activateShader(ShaderType.TRANSFORM);
         TransformShader.shader().updateViewUniform();
         TransformShader.shader().setViewPos(-x, -y, -z);
+
+        ShaderLoader.activateShader(ShaderType.CLICK);
+        ClickShader.shader().updateViewUniform();
 
         if (!isPerspective)
         {
@@ -160,13 +163,22 @@ public class Camera
         if (Mouse.isButtonDown(0))
         {
             Matrix4f projectionView = perspective(70f, screenWidth / screenHeight, 0.01f, 2f);
-            TransformShader.shader().setupProjection(projectionView);
+            updateProjection(projectionView);
         }
         else if (Mouse.isButtonDown(1) || !isPerspective)
         {
             Matrix4f projectionView = orthographic(screenWidth * orthoZoom, screenHeight * orthoZoom, 0.01f, 100f);
-            TransformShader.shader().setupProjection(projectionView);
+            updateProjection(projectionView);
         }
+    }
+
+    private static void updateProjection(Matrix4f projection)
+    {
+        ShaderLoader.activateShader(ShaderType.TRANSFORM);
+        TransformShader.shader().setupProjection(projection);
+
+        ShaderLoader.activateShader(ShaderType.CLICK);
+        ClickShader.shader().setupProjection(projection);
     }
 
     private static Matrix4f perspective(float fov, float aspect, float near, float far)
@@ -175,8 +187,8 @@ public class Camera
 
         Matrix4f m = new Matrix4f();
 
-        float angle = (float) ((fov / 180.0f) * Math.PI);
-        float f = (float) (1.0f / Math.tan(angle * 0.5f));
+        float angle = (fov / 180.0f) * FloatMath.PI;
+        float f = 1.0f / FloatMath.tan(angle * 0.5f);
 
         /* Note, matrices are accessed like 2D arrays in C.
          They are column major, i.e m[y][x] */
@@ -202,19 +214,8 @@ public class Camera
         Matrix4f OrthoMatrix = new Matrix4f();
 
         OrthoMatrix.m00 = 2.0f / (right - left);
-//        OrthoMatrix.m01 = 0.0f;
-//        OrthoMatrix.m02 = 0.0f;
-//        OrthoMatrix.m03 = 0.0f;
-
-//        OrthoMatrix.m10 = 0.0f;
         OrthoMatrix.m11 = 2.0f / (top - bottom);
-//        OrthoMatrix.m12 = 0.0f;
-//        OrthoMatrix.m13 = 0.0f;
-
-//        OrthoMatrix.m20 = 0.0f;
-//        OrthoMatrix.m21 = 0.0f;
         OrthoMatrix.m22 = -2.0f / (far - near);
-//        OrthoMatrix.m23 = 0.0f;
 
         OrthoMatrix.m30 = -(right + left) / (right - left);
         OrthoMatrix.m31 = -(top + bottom) / (top - bottom);
@@ -227,14 +228,14 @@ public class Camera
     private static void updateView()
     {
         SHARED_VIEW_TRANSFORM.setIdentity();
-        SHARED_VIEW_TRANSFORM.rotate((float) Math.toRadians(pitch), new Vector3f(1, 0, 0));
-        SHARED_VIEW_TRANSFORM.rotate((float) Math.toRadians(roll), new Vector3f(0, 1, 0));
-        SHARED_VIEW_TRANSFORM.rotate((float) Math.toRadians(yaw), new Vector3f(0, 0, 1));
+        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(pitch), new Vector3f(1, 0, 0));
+        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(roll), new Vector3f(0, 1, 0));
+        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(yaw), new Vector3f(0, 0, 1));
         SHARED_VIEW_TRANSFORM.translate(new Vector3f(x, y, z));
 
-        float dX = (float) (Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch + 90))) * 0.1f;
-        float dY = (float) (Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch + 90))) * 0.1f;
-        float dZ = (float) (Math.cos(Math.toRadians(pitch))) * 0.1f;
+        float dX = FloatMath.sin(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90)) * 0.1f;
+        float dY = FloatMath.cos(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90)) * 0.1f;
+        float dZ = FloatMath.cos(FloatMath.toRadians(pitch)) * 0.1f;
         SHARED_VIEW_TRANSFORM.translate(new Vector3f(-dX * 10, -dY * 10, dZ * 10));
     }
 

@@ -3,6 +3,7 @@ package gl.models.transforms;
 import game.world.basic.Positioning;
 import gl.models.ElementBuffer;
 import gl.glUtils.ShaderControls;
+import gl.shaders.ClickShader;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import gl.shaders.SharedShaderObjects;
@@ -10,9 +11,10 @@ import gl.shaders.ShaderLoader;
 import gl.shaders.ShaderType;
 import gl.shaders.SimpleDepthShader;
 import gl.shaders.TransformShader;
+import utils.interfaces.IClickable;
 import utils.interfaces.IShadowable;
 
-public class TransformModel extends ElementBuffer implements IShadowable
+public class TransformModel extends ElementBuffer implements IShadowable, IClickable
 {
 
     private static final Matrix4f SHARED_TRANSFORM = SharedShaderObjects.SHARED_MODEL_TRANSFORM;
@@ -51,6 +53,7 @@ public class TransformModel extends ElementBuffer implements IShadowable
         //5 offset, for starts at 5
         
         setupForShadows();
+        setupForClick();
     }
     
     private void setupForShadows()
@@ -74,6 +77,15 @@ public class TransformModel extends ElementBuffer implements IShadowable
         //8 stride, for 8 floats per vertex
         //5 offset, for starts at 5
     }
+    
+    private void setupForClick()
+    {
+        int positionAttribute = ShaderControls.createAttribute(ClickShader.shader().getProgram(), "position");
+        ShaderControls.assignAtribute(positionAttribute, 3, 8, 0);
+        //3 components, for X, Y and Z
+        //8 stride, for 8 floats per vertex
+        //0 offset, for starts at 0
+    }
 
     @Override
     public void draw()
@@ -81,6 +93,15 @@ public class TransformModel extends ElementBuffer implements IShadowable
         ShaderLoader.activateShader(ShaderType.TRANSFORM);
         doTransformation();
         TransformShader.shader().updateModelUniform();
+        super.draw();
+    }
+    
+    @Override
+    public void drawClick()
+    {
+        ShaderLoader.activateShader(ShaderType.CLICK);
+        doTransformation();
+        ClickShader.shader().updateModelUniform();
         super.draw();
     }
 

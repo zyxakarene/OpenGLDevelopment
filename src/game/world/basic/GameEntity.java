@@ -3,10 +3,11 @@ package game.world.basic;
 import gl.models.ModelManager;
 import gl.models.transforms.TransformModel;
 import gl.textures.TextureManager;
+import utils.interfaces.IClickable;
 import utils.interfaces.IDrawable;
 import utils.interfaces.IShadowable;
 
-public class GameEntity implements IDrawable, IShadowable
+public class GameEntity implements IDrawable, IShadowable, IClickable
 {
 
     private Positioning info;
@@ -161,5 +162,12 @@ public class GameEntity implements IDrawable, IShadowable
     {
         model.setPositionInfo(info);
         model.drawShadow();
+    }
+    
+    @Override
+    public void drawClick()
+    {
+        model.setPositionInfo(info);
+        model.drawClick();
     }
 }

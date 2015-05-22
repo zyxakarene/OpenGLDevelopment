@@ -1,8 +1,6 @@
 #version 420
 
-in vec3 position;
-in vec2 texcoord;
-in vec3 normal;
+layout(location = 0) in vec3 position;
 
 uniform mat4 model;
 uniform mat4 view;

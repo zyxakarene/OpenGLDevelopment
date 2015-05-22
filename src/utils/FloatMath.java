@@ -2,6 +2,7 @@ package utils;
 
 public class FloatMath
 {
+    public static final float PI = (float) Math.PI;
 
     public static float toRadians(float degrees)
     {

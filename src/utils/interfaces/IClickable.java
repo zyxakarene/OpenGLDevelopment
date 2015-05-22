@@ -1,7 +1,7 @@
 package utils.interfaces;
 
 
-public interface IClickable extends IDrawable
+public interface IClickable
 {
-    
+    public void drawClick();
 }
