@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.BufferedImageUtil;
 import org.newdawn.slick.util.ResourceLoader;
@@ -15,7 +16,7 @@ import org.newdawn.slick.util.ResourceLoader;
 class TextureImage
 {
 
-    private static Texture currentTexture;
+    static Texture currentTexture;
     private Texture texture;
 
     TextureImage(String name, BufferedImage image) throws IOException
@@ -37,7 +38,7 @@ class TextureImage
             BufferControls.activeTexture(0);
             texture.bind();
             currentTexture = texture;
-            GLUtils.errorCheck();
+            GL11.glGetError();
         }
     }
 }

@@ -1,9 +1,9 @@
 package gl.textures;
 
-import gl.glUtils.BufferControls;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
+import org.newdawn.slick.opengl.TextureImpl;
 import utils.constants.TextureConstants;
 
 public class TextureManager
@@ -20,6 +20,8 @@ public class TextureManager
 //        add("WoodPlank", "png");
 //        add("Tiles", "png");
         add(TextureConstants.TILES, "png");
+        add(TextureConstants.ENEMY_SET, "png");
+        add(TextureConstants.SKYBOX, "png");
     }
 
     public static void bind(String name)
@@ -37,5 +39,11 @@ public class TextureManager
     {
         TextureImage image = new TextureImage(name, format);
         map.put(name, image);
+    }
+
+    public static void unbind()
+    {
+        TextureImage.currentTexture = null;
+        TextureImpl.unbind();
     }
 }

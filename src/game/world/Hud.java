@@ -4,6 +4,7 @@
  */
 package game.world;
 
+import game.control.clicker.ClickBuffer;
 import gl.glUtils.BufferControls;
 import gl.lighting.Shadow;
 import gl.shaders.HudShader;
@@ -51,10 +52,10 @@ public class Hud
         float vertices[] =
         {
             //  Position    Texcoords
-            -1f, -0.5f, 0.0f, 0.0f, // Top-left
-            -0.5f, -0.5f, 1.0f, 0.0f, // Top-right
-            -0.5f, -1f, 1.0f, 1.0f, // Bottom-right
-            -1f, -1f, 0.0f, 1.0f  // Bottom-left
+            -1f, -0.5f, 0.0f, 1.0f, // Top-left
+            -0.5f, -0.5f, 1.0f, 1.0f, // Top-right
+            -0.5f, -1f, 1.0f, 0.0f, // Bottom-right
+            -1f, -1f, 0.0f, 0.0f  // Bottom-left
         };
 
 
@@ -105,7 +106,7 @@ public class Hud
     public static void draw()
     {
         ShaderLoader.activateShader(ShaderType.HUD);
-        Shadow.bindTexture();
+        ClickBuffer.bindTexture();
         glDisable(GL_CULL_FACE);
 
 

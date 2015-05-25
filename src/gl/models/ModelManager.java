@@ -3,7 +3,10 @@ package gl.models;
 import gl.models.transforms.TransformModel;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import utils.constants.TileTypes;
+import utils.exceptions.Msg;
 
 public class ModelManager
 {
@@ -12,16 +15,15 @@ public class ModelManager
 
     public static void loadAllTiles() throws IOException
     {
-        loadPlanes();
-        String[] modelNames = TileTypes.getAllNames();
-
-        for (String model : modelNames)
-        {
-            add(model);
-            System.out.println("Added " + model);
-//            System.exit(0);
-        }
-        map.put("robot", new ExternalModelManager().load("robot_normal.obj"));
+//        loadPlanes();
+//        String[] modelNames = TileTypes.getAllNames();
+//
+//        for (String model : modelNames)
+//        {
+//            add(model);
+//            System.out.println("Added model" + model);
+//        }
+//        map.put("robot", new ExternalModelManager().load("robot_normal.obj"));
 //            map.put("fence", new ExternalModelManager().load("Fence.obj"));
 //            map.put("scene", new ExternalModelManager().load("SampleScene.obj"));
 //            map.put("scene2", new ExternalModelManager().load("SampleScene2.obj"));
@@ -40,6 +42,18 @@ public class ModelManager
 
     public static TransformModel getModel(String path)
     {
+        if (map.containsKey(path) ==false)
+        {
+            try
+            {
+                add(path);
+            }
+            catch (IOException ex)
+            {
+                Msg.error(path, ex);
+            }
+        }
+        
         return map.get(path);
     }
 

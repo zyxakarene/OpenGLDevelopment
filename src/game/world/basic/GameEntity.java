@@ -7,7 +7,7 @@ import utils.interfaces.IClickable;
 import utils.interfaces.IDrawable;
 import utils.interfaces.IShadowable;
 
-public class GameEntity implements IDrawable, IShadowable, IClickable
+public abstract class GameEntity implements IDrawable, IShadowable, IClickable
 {
 
     private Positioning info;
@@ -19,7 +19,7 @@ public class GameEntity implements IDrawable, IShadowable, IClickable
         info = Positioning.getDefault();
     }
 
-    public void setModel(String path)
+    protected void setModel(String path)
     {
         model = ModelManager.getModel(path);
     }
@@ -29,7 +29,7 @@ public class GameEntity implements IDrawable, IShadowable, IClickable
         this.info = info;
     }
 
-    public void setTexture(String texture)
+    protected void setTexture(String texture)
     {
         this.texture = texture;
     }

@@ -8,6 +8,7 @@ public class GameConstants
 {
     public static final int GAME_WIDTH = (int) (1920 * 0.75);
     public static final int GAME_HEIGHT = (int) (1080 * 0.75);
+    public static final String SKYBOX_MODEL = "Skybox";
     
     public static final Logger LOGGER = Logger.getGlobal();
     

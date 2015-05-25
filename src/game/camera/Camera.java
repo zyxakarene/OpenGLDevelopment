@@ -1,11 +1,15 @@
 package game.camera;
 
 import game.control.ElapsedTime;
+import game.control.KeyboardControl;
+import game.control.MouseControl;
 import gl.shaders.ClickShader;
 import gl.shaders.SharedShaderObjects;
 import gl.shaders.ShaderLoader;
 import gl.shaders.ShaderType;
+import gl.shaders.SkyboxShader;
 import gl.shaders.TransformShader;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Matrix4f;
@@ -61,9 +65,15 @@ public class Camera
 
         Matrix4f projectionView = perspective(70f, screenWidth / screenHeight, 0.01f, 2f);
         updateProjection(projectionView);
+        
+        KeyboardControl.listenForHolding(Keyboard.KEY_W);
+        KeyboardControl.listenForHolding(Keyboard.KEY_S);
+        KeyboardControl.listenForHolding(Keyboard.KEY_A);
+        KeyboardControl.listenForHolding(Keyboard.KEY_D);
+        KeyboardControl.listenForHolding(Keyboard.KEY_LSHIFT);
     }
 
-    public static void move(int direction)
+    private static void move(int direction)
     {
         float multiplier = ElapsedTime.get() * 0.15f;
 
@@ -108,14 +118,13 @@ public class Camera
         }
     }
 
-    public static void rotate(Vector3f amount)
+    private static void rotate(float x, float y, float z)
     {
         float multiplier = ElapsedTime.get() * 0.008f;
-        amount.scale(multiplier);
 
-        pitch = pitch + amount.x;
-        roll = roll + amount.y;
-        yaw = yaw + amount.z;
+        pitch = pitch + (x * multiplier);
+        roll = roll + (y * multiplier);
+        yaw = yaw + (z * multiplier);
 
         if (pitch > 0)
         {
@@ -138,47 +147,58 @@ public class Camera
 
     public static void look()
     {
-        updateView();
+        updateViewRotation();
 
+        ShaderLoader.activateShader(ShaderType.SKYBOX);
+        SkyboxShader.shader().updateViewUniform();
+        
+        updateViewTranslation();
+        
         ShaderLoader.activateShader(ShaderType.TRANSFORM);
         TransformShader.shader().updateViewUniform();
         TransformShader.shader().setViewPos(-x, -y, -z);
 
         ShaderLoader.activateShader(ShaderType.CLICK);
         ClickShader.shader().updateViewUniform();
+        
+        
+        
 
-        if (!isPerspective)
-        {
-            int wheel = Mouse.getDWheel();
-            if (wheel > 0)
-            {
-                orthoZoom *= 0.9f;
-            }
-            else if (wheel < 0)
-            {
-                orthoZoom *= 1.1f;
-            }
-        }
-
-        if (Mouse.isButtonDown(0))
-        {
-            Matrix4f projectionView = perspective(70f, screenWidth / screenHeight, 0.01f, 2f);
-            updateProjection(projectionView);
-        }
-        else if (Mouse.isButtonDown(1) || !isPerspective)
-        {
-            Matrix4f projectionView = orthographic(screenWidth * orthoZoom, screenHeight * orthoZoom, 0.01f, 100f);
-            updateProjection(projectionView);
-        }
+//        if (!isPerspective)
+//        {
+//            int wheel = Mouse.getDWheel();
+//            if (wheel > 0)
+//            {
+//                orthoZoom *= 0.9f;
+//            }
+//            else if (wheel < 0)
+//            {
+//                orthoZoom *= 1.1f;
+//            }
+//        }
+//
+//        if (Mouse.isButtonDown(0))
+//        {
+//            Matrix4f projectionView = perspective(70f, screenWidth / screenHeight, 0.01f, 2f);
+//            updateProjection(projectionView);
+//        }
+//        else if (Mouse.isButtonDown(1))
+//        {
+//            Matrix4f projectionView = orthographic(screenWidth * orthoZoom, screenHeight * orthoZoom, 0.01f, 100f);
+//            updateProjection(projectionView);
+//        }
     }
 
     private static void updateProjection(Matrix4f projection)
     {
+        ShaderLoader.activateShader(ShaderType.CLICK);
+        ClickShader.shader().setupProjection(projection);
+
         ShaderLoader.activateShader(ShaderType.TRANSFORM);
         TransformShader.shader().setupProjection(projection);
 
-        ShaderLoader.activateShader(ShaderType.CLICK);
-        ClickShader.shader().setupProjection(projection);
+        ShaderLoader.activateShader(ShaderType.SKYBOX);
+        SkyboxShader.shader().setupProjection(projection);
     }
 
     private static Matrix4f perspective(float fov, float aspect, float near, float far)
@@ -225,18 +245,36 @@ public class Camera
         return OrthoMatrix;
     }
 
-    private static void updateView()
+//    private static void updateView()
+//    {
+//        SHARED_VIEW_TRANSFORM.setIdentity();
+//        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(pitch), new Vector3f(1, 0, 0));
+//        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(roll), new Vector3f(0, 1, 0));
+//        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(yaw), new Vector3f(0, 0, 1));
+//        SHARED_VIEW_TRANSFORM.translate(new Vector3f(x, y, z));
+//
+//        float dX = FloatMath.sin(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90)) * 0.1f;
+//        float dY = FloatMath.cos(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90)) * 0.1f;
+//        float dZ = FloatMath.cos(FloatMath.toRadians(pitch)) * 0.1f;
+//        SHARED_VIEW_TRANSFORM.translate(new Vector3f(-dX * 10, -dY * 10, dZ * 10));
+//    }
+    
+    private static void updateViewTranslation()
     {
-        SHARED_VIEW_TRANSFORM.setIdentity();
-        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(pitch), new Vector3f(1, 0, 0));
-        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(roll), new Vector3f(0, 1, 0));
-        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(yaw), new Vector3f(0, 0, 1));
         SHARED_VIEW_TRANSFORM.translate(new Vector3f(x, y, z));
 
         float dX = FloatMath.sin(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90)) * 0.1f;
         float dY = FloatMath.cos(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90)) * 0.1f;
         float dZ = FloatMath.cos(FloatMath.toRadians(pitch)) * 0.1f;
         SHARED_VIEW_TRANSFORM.translate(new Vector3f(-dX * 10, -dY * 10, dZ * 10));
+    }
+    
+    private static void updateViewRotation()
+    {
+        SHARED_VIEW_TRANSFORM.setIdentity();
+        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(pitch), new Vector3f(1, 0, 0));
+        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(roll), new Vector3f(0, 1, 0));
+        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(yaw), new Vector3f(0, 0, 1));
     }
 
     public static float getX()
@@ -254,14 +292,60 @@ public class Camera
         return z;
     }
 
+    public static void clearViewWhite()
+    {
+        glClearColor(1.0f, 1.0f, 1.0f, 0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
     public static void clearView()
     {
         glClearColor(0.4f, 0.6f, 0.9f, 0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
+    
+    public static void clearDepth()
+    {
+        glClear(GL_DEPTH_BUFFER_BIT);
+    }
 
-    public static void setIsFast(boolean keyDown)
+    private static void setIsFast(boolean keyDown)
     {
         moveSpeed = keyDown ? 1 : 0.2f;
+    }
+
+    public static void update()
+    {
+        if (KeyboardControl.wasKeyPressed(Keyboard.KEY_Z))
+        {
+            Mouse.setGrabbed(!Mouse.isGrabbed());
+        }
+        
+        if (Mouse.isGrabbed())
+        {
+            int dx = MouseControl.getMovementX();
+            int dy = MouseControl.getMovementY();
+            rotate(-dy, 0, dx);
+        }
+
+        setIsFast(KeyboardControl.isKeyDown(Keyboard.KEY_LSHIFT));
+
+        if (KeyboardControl.isKeyDown(Keyboard.KEY_W))
+        {
+            move(Camera.FORWARD);
+        }
+        if (KeyboardControl.isKeyDown(Keyboard.KEY_S))
+        {
+            move(Camera.BACKWARD);
+        }
+        
+        if (KeyboardControl.isKeyDown(Keyboard.KEY_D))
+        {
+            move(Camera.RIGHT);
+        }
+        if (KeyboardControl.isKeyDown(Keyboard.KEY_A))
+        {
+            move(Camera.LEFT);
+        }
     }
 }

@@ -6,5 +6,6 @@ public enum ShaderType
     TRANSFORM,
     HUD,
     DEBTH,
-    CLICK;
+    CLICK,
+    SKYBOX;
 }

@@ -90,7 +90,6 @@ public class TransformModel extends ElementBuffer implements IShadowable, IClick
     @Override
     public void draw()
     {
-        ShaderLoader.activateShader(ShaderType.TRANSFORM);
         doTransformation();
         TransformShader.shader().updateModelUniform();
         super.draw();
@@ -99,7 +98,6 @@ public class TransformModel extends ElementBuffer implements IShadowable, IClick
     @Override
     public void drawClick()
     {
-        ShaderLoader.activateShader(ShaderType.CLICK);
         doTransformation();
         ClickShader.shader().updateModelUniform();
         super.draw();
@@ -123,9 +121,14 @@ public class TransformModel extends ElementBuffer implements IShadowable, IClick
     @Override
     public void drawShadow()
     {
-        ShaderLoader.activateShader(ShaderType.DEBTH);
         doTransformation();
         SimpleDepthShader.shader().updateModelUniform();
         super.draw();
+    }
+
+    @Override
+    public void onClick(int mouseKey)
+    {
+        throw new UnsupportedOperationException("Implement");
     }
 }

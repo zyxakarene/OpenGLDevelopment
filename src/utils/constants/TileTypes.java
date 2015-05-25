@@ -1,9 +1,12 @@
 package utils.constants;
 
+import java.util.HashMap;
+
 public class TileTypes
 {
 
-    private static String[] idToName = new String[8];
+    private static final HashMap<String, Integer> nameToId = new HashMap<>();
+    private static final String[] idToName = new String[8];
     
     public static final int PLANE = 0;
     public static final int LANE_STRAIGHT = 1;
@@ -32,6 +35,15 @@ public class TileTypes
         idToName[CLIFF_STRAIGHT] = CLIFF_STRAIGHT_NAME;
         idToName[CLIFF_CORNER] = CLIFF_CORNER_NAME;
         idToName[CLIFF_INNER_CORNER] = CLIFF_INNER_CORNER_NAME;
+        
+        nameToId.put(PLANE_NAME, PLANE);
+        nameToId.put(LANE_STRAIGHT_NAME, LANE_STRAIGHT);
+        nameToId.put(LANE_CORNER_NAME, LANE_CORNER);
+        nameToId.put(LANE_CROSS_NAME, LANE_CROSS);
+        nameToId.put(LANE_RISE_NAME, LANE_RISE);
+        nameToId.put(CLIFF_STRAIGHT_NAME, CLIFF_STRAIGHT);
+        nameToId.put(CLIFF_CORNER_NAME, CLIFF_CORNER);
+        nameToId.put(CLIFF_INNER_CORNER_NAME, CLIFF_INNER_CORNER);
     }
     
     public static String[] getAllNames()
@@ -39,6 +51,11 @@ public class TileTypes
         return idToName;
     }
 
+    public static int nameToId(String name)
+    {
+        return nameToId.get(name);
+    }
+    
     public static String idToName(int id)
     {
         return idToName[id];

@@ -1,13 +1,17 @@
 package gl.glUtils;
 
+import gl.textures.TextureManager;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL14.*;
 import static org.lwjgl.opengl.GL15.*;
+import org.lwjgl.opengl.GL30;
 import static org.lwjgl.opengl.GL30.*;
 
 public class BufferControls
@@ -31,6 +35,7 @@ public class BufferControls
      */
     public static void bindTexture(int texture)
     {
+        TextureManager.unbind();
         glBindTexture(GL_TEXTURE_2D, texture);
     }
 
@@ -56,7 +61,22 @@ public class BufferControls
         glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, buffer);
     }
 
-    public static void somethingWithShadows(int buffer, int texture)
+    public static void frameBufferToColor(int frameBuffer, int renderBuffer, int texture)
+    {
+        glTexParameterf(GL11.GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);                                         // make it linear filterd
+        glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL_RGBA8, 128, 128, 0, GL_RGBA, GL_UNSIGNED_BYTE, (FloatBuffer) null);       // Create the texture data
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, texture, 0);           // attach it to the framebuffer
+
+
+        // initialize depth renderbuffer
+        glBindRenderbuffer(GL30.GL_RENDERBUFFER, renderBuffer);                                                 // bind the depth renderbuffer
+        glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 128, 128);                                   // get the data space for it
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL30.GL_RENDERBUFFER, renderBuffer);     // bind it to the renderbuffer
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    
+    public static void frameBufferToDepth(int buffer, int texture)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, buffer);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture, 0);
@@ -142,6 +162,11 @@ public class BufferControls
         return glGenBuffers();
     }
 
+    public static int generateRenderBuffer()
+    {
+        return glGenRenderbuffers();
+    }
+
     public static int generateFrameBuffer()
     {
         return glGenFramebuffers();
@@ -152,9 +177,9 @@ public class BufferControls
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
     }
 
-    public static void bindFrameBuffer(int vbo)
+    public static void bindFrameBuffer(int frameBuffer)
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, vbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
     }
 
     public static void fillVBO_Static(float[] array)

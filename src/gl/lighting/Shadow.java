@@ -14,9 +14,9 @@ import org.lwjgl.util.vector.Vector3f;
 public class Shadow
 {
 
-    public static float pitchC = -69.5f;
+    public static float pitchC = -43.68f;
     public static float rollC = 0f;
-    public static float yawC = 224f;
+    public static float yawC = 235.47f;
 //    public static float pitchC = -60.5f;
 //    public static float rollC = 0f;
 //    public static float yawC = 2223f;
@@ -30,7 +30,7 @@ public class Shadow
     public static void setup(int width, int height)
     {
         ShaderLoader.activateShader(ShaderType.DEBTH);
-        Matrix4f projectionView = orthographic(width, height, 0.01f, 100f);
+        Matrix4f projectionView = orthographic(width * 2.4f, height * 2.4f, 0.01f, 100f);
         SimpleDepthShader.shader().setupProjection(projectionView);
 
         ShaderLoader.activateShader(ShaderType.TRANSFORM);
@@ -48,7 +48,7 @@ public class Shadow
         BufferControls.bindTexture(texture);
         BufferControls.createTexture(width, height);
         BufferControls.setupTexture();
-        BufferControls.somethingWithShadows(buffer, texture);
+        BufferControls.frameBufferToDepth(buffer, texture);
     }
 
     public static void bindTexture()
@@ -84,9 +84,8 @@ public class Shadow
         viewMatrix.rotate((float) Math.toRadians(pitchC), new Vector3f(1, 0, 0));
         viewMatrix.rotate((float) Math.toRadians(rollC), new Vector3f(0, 1, 0));
         viewMatrix.rotate((float) Math.toRadians(yawC), new Vector3f(0, 0, 1));
-//        viewMatrix.translate(new Vector3f(-25.4f, -27.4f, -19.1f));
-        viewMatrix.translate(new Vector3f(-61, -64, -34));
-//        viewMatrix.translate(new Vector3f(0f, -1f, -4.5f));
+//        viewMatrix.translate(new Vector3f(-61, -64, -34));
+        viewMatrix.translate(new Vector3f(-86.29f, -38.1f, -47.06f));
 
 //        float dX = -0.06506672f;
 //        float dY = -0.06737856f;

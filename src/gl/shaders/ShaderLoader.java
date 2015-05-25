@@ -22,11 +22,15 @@ public class ShaderLoader
         
         AbstractShader clickShader = new ClickShader();
         clickShader.load();
+        
+        SkyboxShader skyboxShader = new SkyboxShader();
+        skyboxShader.load();
 
         shaderMap.put(ShaderType.TRANSFORM, transformShader);
         shaderMap.put(ShaderType.DEBTH, depthShader);
         shaderMap.put(ShaderType.HUD, hudShader);
         shaderMap.put(ShaderType.CLICK, clickShader);
+        shaderMap.put(ShaderType.SKYBOX, skyboxShader);
     }
 
     public static void activateShader(ShaderType shader)

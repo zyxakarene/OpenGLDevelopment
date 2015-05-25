@@ -1,6 +1,7 @@
 package main.commands;
 
 import game.camera.Camera;
+import game.control.clicker.ClickBuffer;
 import gl.glUtils.GLUtils;
 import gl.lighting.Shadow;
 import gl.models.ModelManager;
@@ -59,6 +60,7 @@ public class SetupCommand implements ICommand
         ShaderLoader.loadShaders();
         TextureManager.initTextures();
         ModelManager.loadAllTiles();
+        ClickBuffer.init();
         
         Camera.create(new Vector3f(4f, 8f, -9f), new Vector3f(-90, 0, 0), GameConstants.GAME_WIDTH, GameConstants.GAME_HEIGHT);
         

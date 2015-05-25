@@ -71,7 +71,7 @@ void main()
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * lightColor;
 
-    vec3 ambient = 0.1f * lightColor; //0.1f is the ambient strenght
+    vec3 ambient = 0.2f * lightColor; //0.1f is the ambient strenght
 
     vec4 textureColor = texture(tex, vec2(Texcoord.x, -Texcoord.y));
     textureColor.r = textureColor.r * lightColor.r;
