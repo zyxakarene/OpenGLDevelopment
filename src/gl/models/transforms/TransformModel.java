@@ -7,8 +7,6 @@ import gl.shaders.ClickShader;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import gl.shaders.SharedShaderObjects;
-import gl.shaders.ShaderLoader;
-import gl.shaders.ShaderType;
 import gl.shaders.SimpleDepthShader;
 import gl.shaders.TransformShader;
 import utils.interfaces.IClickable;

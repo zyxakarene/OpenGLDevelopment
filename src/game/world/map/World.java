@@ -1,6 +1,7 @@
 package game.world.map;
 
 import game.ai.Enemy;
+import game.ai.MapSolver;
 import game.camera.Camera;
 import game.control.KeyboardControl;
 import game.control.clicker.ClickRegistrator;
@@ -32,8 +33,12 @@ public class World implements IDrawable, IUpdateable
         tiles = new MapLoader().loadMap("MapFile.map");
         enemies = new ArrayList<>();
         skybox = new Skybox();
+        
+        new MapSolver().solveForMap(tiles, 0, 2);
 
         new EditGui().setVisible(true);
+        
+        KeyboardControl.listenForHolding(Keyboard.KEY_LCONTROL);
     }
 
     @Override

@@ -1,7 +1,10 @@
 package game.world.map;
 
+import game.ai.TilePaths;
 import game.control.clicker.ClickRegistrator;
 import game.world.basic.GameEntity;
+import java.util.Arrays;
+import org.lwjgl.util.vector.Vector3f;
 import utils.constants.TextureConstants;
 import utils.constants.TileTypes;
 
@@ -12,6 +15,12 @@ public class Tile extends GameEntity
     public static final int HEIGHT = 4;
     public static String changeTo = TileTypes.PLANE_NAME;
     private int tileType;
+
+    public Vector3f[] getPath()
+    {
+        return path;
+    }
+    private Vector3f[] path;
 
     public Tile(int tileType)
     {
@@ -51,10 +60,18 @@ public class Tile extends GameEntity
             }
         }
     }
-    
+
     public byte getTileType()
     {
         return (byte) tileType;
     }
 
+    public void readyForPath()
+    {
+        if (TileTypes.isLane(tileType))
+        {
+            path = TilePaths.getPaths(tileType);
+            TilePaths.transform(path, getX(), getY(), getZ(), getPitch(), getYaw(), getRoll());
+        }
+    }
 }

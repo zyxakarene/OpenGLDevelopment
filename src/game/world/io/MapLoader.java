@@ -47,6 +47,8 @@ public class MapLoader
                 tiles[i][j] = TileIO.load(buffer);
                 tiles[i][j].setX(Tile.WIDTH * i);
                 tiles[i][j].setY(Tile.WIDTH * j);
+                
+                tiles[i][j].readyForPath();
             }
         }
 

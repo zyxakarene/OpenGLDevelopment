@@ -25,6 +25,11 @@ public class TileTypes
     public static final String CLIFF_CORNER_NAME = "CliffCorner";
     public static final String CLIFF_INNER_CORNER_NAME = "CliffInnerCorner";
 
+    public static boolean isLane(int id)
+    {
+        return id >= LANE_STRAIGHT && id <= LANE_RISE;
+    }
+    
     static
     {
         idToName[PLANE] = PLANE_NAME;
