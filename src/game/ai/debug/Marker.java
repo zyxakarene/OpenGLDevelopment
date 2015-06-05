@@ -12,9 +12,4 @@ public class Marker extends GameEntity
         setTexture(TextureConstants.SKYBOX);
         setScale(0.05f);
     }
-
-    @Override
-    public void onClick(int mouseKey)
-    {
-    }
 }

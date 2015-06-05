@@ -1,5 +1,7 @@
 package utils;
 
+import utils.interfaces.IPositionable;
+
 public class FloatMath
 {
     public static final float PI = (float) Math.PI;
@@ -52,5 +54,19 @@ public class FloatMath
     public static float random()
     {
         return (float) Math.random();
+    }
+    
+    public static float square(float value)
+    {
+        return value * value;
+    }
+    
+    public static float getDistance(IPositionable a, IPositionable b)
+    {
+        float deltaX = Math.abs(a.getX() - b.getX());
+        float deltaY = Math.abs(a.getY() - b.getY());
+        float deltaZ = Math.abs(a.getZ() - b.getZ());
+        
+        return square(deltaX) + square(deltaY) + square(deltaZ);
     }
 }

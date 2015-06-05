@@ -1,9 +1,9 @@
 package game.world.map;
 
 import game.ai.TilePaths;
+import game.ai.towers.TowerManager;
 import game.control.clicker.ClickRegistrator;
 import game.world.basic.GameEntity;
-import java.util.Arrays;
 import org.lwjgl.util.vector.Vector3f;
 import utils.constants.TextureConstants;
 import utils.constants.TileTypes;
@@ -29,7 +29,10 @@ public class Tile extends GameEntity
         setModel(TileTypes.idToName(tileType));
         setTexture(TextureConstants.TILES);
 
-        ClickRegistrator.register(this);
+        if (TileTypes.isLane(tileType) == false)
+        {
+            ClickRegistrator.register(this);
+        }
     }
 
     @Override
@@ -39,23 +42,7 @@ public class Tile extends GameEntity
         {
             case (1):
             {
-                setModel(changeTo);
-                tileType = TileTypes.nameToId(changeTo);
-                break;
-            }
-            case (2):
-            {
-                changeYaw(90);
-                break;
-            }
-            case (4):
-            {
-                changeZ(HEIGHT);
-                break;
-            }
-            case (5):
-            {
-                changeZ(-HEIGHT);
+                TowerManager.instance.addTowerAt(this);
                 break;
             }
         }

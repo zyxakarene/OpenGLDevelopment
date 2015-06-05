@@ -16,6 +16,6 @@ public class ElapsedTime
     
     public static int get()
     {
-        return 16;//elapsedTime;
+        return elapsedTime;
     }
 }

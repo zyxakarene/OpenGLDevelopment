@@ -7,10 +7,14 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import utils.constants.TileTypes;
 import utils.exceptions.Msg;
 
 public class MapLoader
 {
+    private int laneCount;
+    private int planeCount;
+    
 
     public Tile[][] loadMap(String name)
     {
@@ -49,10 +53,29 @@ public class MapLoader
                 tiles[i][j].setY(Tile.WIDTH * j);
                 
                 tiles[i][j].readyForPath();
+                
+                if (TileTypes.isLane(tiles[i][j].getTileType()))
+                {
+                    laneCount++;
+                }
+                else
+                {
+                    planeCount++;
+                }
             }
         }
 
         return tiles;
+    }
+
+    public int getLaneCount()
+    {
+        return laneCount;
+    }
+
+    public int getPlaneCount()
+    {
+        return planeCount;
     }
 
     private RandomAccessFile createFile(String name) throws FileNotFoundException

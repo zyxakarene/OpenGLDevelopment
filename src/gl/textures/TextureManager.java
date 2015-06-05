@@ -22,6 +22,7 @@ public class TextureManager
         add(TextureConstants.TILES, "png");
         add(TextureConstants.ENEMY_SET, "png");
         add(TextureConstants.SKYBOX, "png");
+        add(TextureConstants.TOWER_BASE, "png");
     }
 
     public static void bind(String name)

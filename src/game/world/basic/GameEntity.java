@@ -5,11 +5,11 @@ import gl.models.transforms.TransformModel;
 import gl.textures.TextureManager;
 import utils.interfaces.IClickable;
 import utils.interfaces.IDrawable;
+import utils.interfaces.IPositionable;
 import utils.interfaces.IShadowable;
 
-public abstract class GameEntity implements IDrawable, IShadowable, IClickable
+public abstract class GameEntity implements IDrawable, IShadowable, IClickable, IPositionable
 {
-
     private Positioning info;
     private TransformModel model;
     private String texture;
@@ -169,5 +169,11 @@ public abstract class GameEntity implements IDrawable, IShadowable, IClickable
     {
         model.setPositionInfo(info);
         model.drawClick();
+    }
+
+    @Override
+    public void onClick(int mouseKey)
+    {
+        throw new UnsupportedOperationException("Override in sub class.");
     }
 }
