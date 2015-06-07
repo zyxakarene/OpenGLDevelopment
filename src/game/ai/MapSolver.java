@@ -7,12 +7,13 @@ import java.util.Collections;
 import java.util.List;
 import org.lwjgl.util.vector.Vector3f;
 import utils.constants.TileTypes;
+import utils.interfaces.IPositionable;
 
 public class MapSolver
 {
 
     private final ArrayList<Tile> allTiles;
-    public static final ArrayList<Vector3f> finalPath = new ArrayList<>();
+    public static final ArrayList<IPositionable> finalPath = new ArrayList<>();
 
     public MapSolver()
     {
@@ -35,7 +36,7 @@ public class MapSolver
         checkDuplicates();
     }
 
-    private Vector3f getLatestPoint()
+    private IPositionable getLatestPoint()
     {
         return finalPath.get(finalPath.size() - 1);
     }
@@ -57,9 +58,9 @@ public class MapSolver
 
     private void addTilePath(Tile tile, boolean reverse)
     {
-        Vector3f[] tilePath = tile.getPath();
+        IPositionable[] tilePath = tile.getPath();
 
-        List<Vector3f> list = Arrays.asList(tilePath);
+        List<IPositionable> list = Arrays.asList(tilePath);
         
         System.out.println("FoundPath: " + list);
         
@@ -81,11 +82,11 @@ public class MapSolver
         {
             Tile tile = allTiles.get(i);
 
-            Vector3f current = getLatestPoint();
+            IPositionable current = getLatestPoint();
 
-            Vector3f[] path = tile.getPath();
-            Vector3f endOne = path[0];
-            Vector3f endTwo = path[path.length - 1];
+            IPositionable[] path = tile.getPath();
+            IPositionable endOne = path[0];
+            IPositionable endTwo = path[path.length - 1];
 
             float distanceOne = distance(current, endOne);
             float distanceTwo = distance(current, endTwo);
@@ -114,9 +115,9 @@ public class MapSolver
         addTilePath(tileToUse, reverse);
     }
 
-    private float distance(Vector3f p1, Vector3f p2)
+    private float distance(IPositionable p1, IPositionable p2)
     {
-        Vector3f distance = new Vector3f(p2.x - p1.x, p2.y - p1.y, p2.z - p1.z);
+        Vector3f distance = new Vector3f(p2.getX() - p1.getX(), p2.getY() - p1.getY(), p2.getZ() - p1.getZ());
 
         return distance.lengthSquared();
     }
@@ -125,12 +126,12 @@ public class MapSolver
     {
         for (int i = 0; i < finalPath.size() - 1; i++)
         {
-            Vector3f p1 = finalPath.get(i);
-            Vector3f p2 = finalPath.get(i + 1);
+            IPositionable p1 = finalPath.get(i);
+            IPositionable p2 = finalPath.get(i + 1);
             
-            float dX = Math.abs(p1.x - p2.x);
-            float dY = Math.abs(p1.y - p2.y);
-            float dZ = Math.abs(p1.z - p2.z);
+            float dX = Math.abs(p1.getX() - p2.getX());
+            float dY = Math.abs(p1.getY() - p2.getY());
+            float dZ = Math.abs(p1.getZ() - p2.getZ());
             
             float distance = (dX *dX) + (dY * dY) + (dZ * dZ);
 

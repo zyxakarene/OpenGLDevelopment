@@ -5,10 +5,10 @@ import gl.models.transforms.TransformModel;
 import gl.textures.TextureManager;
 import utils.interfaces.IClickable;
 import utils.interfaces.IDrawable;
-import utils.interfaces.IPositionable;
+import utils.interfaces.IEntity;
 import utils.interfaces.IShadowable;
 
-public abstract class GameEntity implements IDrawable, IShadowable, IClickable, IPositionable
+public abstract class GameEntity implements IDrawable, IShadowable, IClickable, IEntity
 {
     private Positioning info;
     private TransformModel model;

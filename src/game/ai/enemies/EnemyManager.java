@@ -1,5 +1,6 @@
 package game.ai.enemies;
 
+import gl.shaders.TransformShader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,6 +52,8 @@ public class EnemyManager implements IUpdateable, IDrawable, IShadowable
         {
             enemy.draw();
         }
+        
+        TransformShader.shader().setOverlayColor(1, 1, 1);
     }
 
     @Override

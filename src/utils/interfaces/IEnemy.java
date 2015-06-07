@@ -6,4 +6,6 @@ public interface IEnemy extends IUpdateable, IDrawable, IShadowable, IPositionab
     public void attack(int damage);
 
     public boolean isAlive();
+    
+    public IPositionable getProjectilePoint();
 }

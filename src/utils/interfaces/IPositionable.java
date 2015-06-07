@@ -6,7 +6,8 @@ public interface IPositionable
     public float getX();
     public float getY();
     public float getZ();
-    public float getPitch();
-    public float getYaw();
-    public float getRoll();
+    
+    public void setX(float x);
+    public void setY(float y);
+    public void setZ(float z);
 }

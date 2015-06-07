@@ -17,6 +17,7 @@ public class TransformShader extends AbstractShader
     private int lightViewUniform;
     private int lightProjUniform;
     private int shadowMap;
+    private int overlayUniform;
 
     TransformShader()
     {
@@ -33,6 +34,7 @@ public class TransformShader extends AbstractShader
         lightColUniform = ShaderControls.createUniform(shaderProgram, "lightColor");
         lightDirectionUniform = ShaderControls.createUniform(shaderProgram, "lightDirection");
         viewPosUniform = ShaderControls.createUniform(shaderProgram, "viewPos");
+        overlayUniform = ShaderControls.createUniform(shaderProgram, "overlayColor");
 
         lightViewUniform = ShaderControls.createUniform(shaderProgram, "lightView");
         lightProjUniform = ShaderControls.createUniform(shaderProgram, "lightProj");
@@ -45,7 +47,8 @@ public class TransformShader extends AbstractShader
         ShaderControls.setUniform3F(lightColUniform, 1f, 1f, 1f);
         ShaderControls.setUniform3F(viewPosUniform, 0, 0, 0);
         ShaderControls.setUniform3F(lightDirectionUniform, -0.2f, -0.45f, -0.3f);
-                
+        setOverlayColor(1, 1, 1);
+        
         ShaderControls.setUniform1I(texUniform, 0);
         ShaderControls.setUniform1I(shadowMap, 1);
     }
@@ -67,6 +70,11 @@ public class TransformShader extends AbstractShader
         return instance;
     }
 
+    public void setOverlayColor(float r, float g, float b)
+    {
+        ShaderControls.setUniform3F(overlayUniform, r, g, b);
+    }
+    
     public void setViewPos(float x, float y, float z)
     {
         ShaderControls.setUniform3F(viewPosUniform, x, y, z);

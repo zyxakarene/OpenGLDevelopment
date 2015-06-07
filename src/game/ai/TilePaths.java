@@ -6,53 +6,55 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import utils.FloatMath;
 import utils.constants.TileTypes;
+import utils.geometry.Point3D;
+import utils.interfaces.IPositionable;
 
 public class TilePaths
 {
 
     private static final Matrix4f TRANSFORM = new Matrix4f();
     
-    private static final Vector3f[] LANE_CORNER_PATH = new Vector3f[]
+    private static final IPositionable[] LANE_CORNER_PATH = new IPositionable[]
     {
-        new Vector3f(-2.5f, 0f, -0.245f),
-        new Vector3f(0f, 0f, -0.245f),
-        new Vector3f(0f, 2.5f, -0.245f)
+        new Point3D(-2.5f, 0f, -0.245f),
+        new Point3D(0f, 0f, -0.245f),
+        new Point3D(0f, 2.5f, -0.245f)
     };
     
-    private static final Vector3f[] LANE_STREIGHT_PATH = new Vector3f[]
+    private static final IPositionable[] LANE_STREIGHT_PATH = new IPositionable[]
     {
-        new Vector3f(-2.5f, 0, -0.245f),
-        new Vector3f(0, 0, -0.245f),
-        new Vector3f(2.5f, 0, -0.245f)
+        new Point3D(-2.5f, 0, -0.245f),
+        new Point3D(0, 0, -0.245f),
+        new Point3D(2.5f, 0, -0.245f)
     };
     
-    private static final Vector3f[] LANE_RISE_PATH = new Vector3f[]
+    private static final IPositionable[] LANE_RISE_PATH = new IPositionable[]
     {
-        new Vector3f(-2.5f, 0, -4.245f),
-        new Vector3f(-1.748f, 0, -3.873f),
-        new Vector3f(1.748f, 0, -0.522f),
-        new Vector3f(2.5f, 0, -0.245f)
+        new Point3D(-2.5f, 0, -4.245f),
+        new Point3D(-1.748f, 0, -3.873f),
+        new Point3D(1.748f, 0, -0.522f),
+        new Point3D(2.5f, 0, -0.245f)
     };
 
-    public static Vector3f[] getPaths(int id)
+    public static IPositionable[] getPaths(int id)
     {
-        Vector3f[] copy;
-        Vector3f[] template;
+        IPositionable[] copy;
+        IPositionable[] template;
         
         if (id == TileTypes.LANE_STRAIGHT)
         {
             template = LANE_STREIGHT_PATH;
-            copy = new Vector3f[LANE_STREIGHT_PATH.length];
+            copy = new IPositionable[LANE_STREIGHT_PATH.length];
         }
         else if(id == TileTypes.LANE_CORNER)
         {
             template = LANE_CORNER_PATH;
-            copy = new Vector3f[LANE_CORNER_PATH.length];
+            copy = new IPositionable[LANE_CORNER_PATH.length];
         }
         else if(id == TileTypes.LANE_RISE)
         {
             template = LANE_RISE_PATH;
-            copy = new Vector3f[LANE_RISE_PATH.length];
+            copy = new IPositionable[LANE_RISE_PATH.length];
         }
         else
         {
@@ -65,16 +67,16 @@ public class TilePaths
         return copy;
     }
 
-    private static void copyOver(Vector3f[] from, Vector3f[] to)
+    private static void copyOver(IPositionable[] from, IPositionable[] to)
     {
         for (int i = 0; i < to.length; i++)
         {
-            Vector3f vector3f = from[i];
-            to[i] = new Vector3f(vector3f);
+            IPositionable vector3f = from[i];
+            to[i] = new Point3D(vector3f);
         }
     }
 
-    public static void transform(Vector3f[] path, float x, float y, float z, float pitch, float yaw, float roll)
+    public static void transform(IPositionable[] path, float x, float y, float z, float pitch, float yaw, float roll)
     {
         System.out.println("Before transform: " + Arrays.toString(path));
         
@@ -85,15 +87,17 @@ public class TilePaths
         TRANSFORM.rotate(FloatMath.toRadians(yaw), new Vector3f(0.0f, 0.0f, 1.0f));
         
         Vector4f vec4;
-        Vector3f vec3;
+        IPositionable pathPoint;
         
         for (int i = 0; i < path.length; i++)
         {
-            vec3 = path[i];
-            vec4 = new Vector4f(vec3.x, vec3.y, vec3.z, 1f);
+            pathPoint = path[i];
+            vec4 = new Vector4f(pathPoint.getX(), pathPoint.getY(), pathPoint.getZ(), 1f);
             Matrix4f.transform(TRANSFORM, vec4, vec4);
             
-            vec3.set(vec4.x, vec4.y, vec4.z);
+            pathPoint.setX(vec4.x);
+            pathPoint.setY(vec4.y);
+            pathPoint.setZ(vec4.z);
         }
         
         System.out.println("After transform: " + Arrays.toString(path));

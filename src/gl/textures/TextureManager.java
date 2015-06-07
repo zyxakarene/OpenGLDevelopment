@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 import org.newdawn.slick.opengl.TextureImpl;
+import game.ai.towers.projectiles.ProjectileType;
 import utils.constants.TextureConstants;
 
 public class TextureManager
@@ -23,6 +24,7 @@ public class TextureManager
         add(TextureConstants.ENEMY_SET, "png");
         add(TextureConstants.SKYBOX, "png");
         add(TextureConstants.TOWER_BASE, "png");
+        add(ProjectileType.ROCKET.texture, "png");
     }
 
     public static void bind(String name)

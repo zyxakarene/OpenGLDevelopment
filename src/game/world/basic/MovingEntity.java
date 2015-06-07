@@ -1,16 +1,16 @@
 package game.world.basic;
 
 import game.ai.debug.Marker;
+import game.ai.towers.projectiles.Projectile;
 import java.util.ArrayList;
-import org.lwjgl.util.vector.Vector3f;
 import utils.FloatMath;
 import utils.constants.GameConstants;
+import utils.interfaces.IPositionable;
 import utils.interfaces.IUpdateable;
 
 public abstract class MovingEntity extends GameEntity implements IUpdateable
 {
 
-    private ArrayList<Vector3f> path;
     private float degreesUpDown;
     private int goingToIndex;
     private boolean isLookingAtPoint;
@@ -18,24 +18,27 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
 
     public MovingEntity()
     {
-        path = getPath();
-
         goingToIndex = 0;
         isLookingAtPoint = false;
-
-        if (GameConstants.SHOW_ENEMY_PATH)
-        {
-            markers = new GameEntity[path.size()];
-
-            for (int i = 0; i < markers.length; i++)
-            {
-                markers[i] = new Marker();
-                markers[i].setPos(path.get(i).x, path.get(i).y, path.get(i).z);
-            }
-        }
     }
 
-    protected abstract ArrayList<Vector3f> getPath();
+    /**
+     * Returns the path for this MovingEntity to go.
+     * <p/>
+     * @return The path to follow.
+     */
+    protected abstract ArrayList<IPositionable> getPath();
+
+    /**
+     * This is called when this MovingEntity has hit
+     * the last point on its path.
+     */
+    protected abstract void hitEndPath();
+
+    protected final void recalculateAngle()
+    {
+        isLookingAtPoint = false;
+    }
 
     @Override
     public void draw()
@@ -54,7 +57,18 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
     @Override
     public void update(int elapsedTime)
     {
-        if (goingToIndex == path.size())
+        if (GameConstants.SHOW_ENEMY_PATH && markers == null)
+        {
+            markers = new GameEntity[getPath().size()];
+
+            for (int i = 0; i < markers.length; i++)
+            {
+                markers[i] = new Marker();
+                markers[i].setPos(getPath().get(i).getX(), getPath().get(i).getY(), getPath().get(i).getZ());
+            }
+        }
+
+        if (isAtTheEnd())
         {
             return;
         }
@@ -65,28 +79,29 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
         }
 
         moveTowardPoint(elapsedTime);
+
         checkHitPoint();
     }
 
     private void lookAtPoint()
     {
-        Vector3f destination = path.get(goingToIndex);
+        IPositionable destination = getPath().get(goingToIndex);
 
-        float width = getY() - destination.y;
-        float lenght = getX() - destination.x;
-        float height = getZ() - destination.z;
+        float lenght = getX() - destination.getX();
+        float width = getY() - destination.getY();
+        float height = getZ() - destination.getZ();
         float newYaw;
 
         if (Math.abs(width + lenght + height) <= 0.1)
         {
-            goingToIndex++;
-            lookAtPoint();
+//            goingToIndex++;
+//            lookAtPoint();
             return;
         }
 
-        if (Math.abs(destination.x - getX()) <= 0.001)
+        if (Math.abs(destination.getX() - getX()) <= 0.001)
         {
-            if (destination.y > getY())
+            if (destination.getY() > getY())
             {
                 newYaw = 270;
             }
@@ -110,7 +125,7 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
             }
         }
 
-        if (destination.z == getZ())
+        if (destination.getZ() == getZ())
         {
             degreesUpDown = 0;
         }
@@ -134,6 +149,11 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
         setYaw(newYaw + 180);
         isLookingAtPoint = true;
     }
+    
+    protected abstract float getHorizontalSpeed();
+    protected abstract float getVerticalSpeed();
+    protected abstract float getHitBias();
+    
 
     private void moveTowardPoint(int elapsedTime)
     {
@@ -141,34 +161,45 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
         float dy = FloatMath.sin(FloatMath.toRadians(getYaw()));
         float dZ = FloatMath.sin(FloatMath.toRadians(degreesUpDown));
 
-        changeX(dx * elapsedTime * 0.01f);
-        changeY(dy * elapsedTime * 0.01f);
-        changeZ(dZ * elapsedTime * 0.013f);
+        changeX(dx * elapsedTime * getHorizontalSpeed());
+        changeY(dy * elapsedTime * getHorizontalSpeed());
+        changeZ(dZ * elapsedTime * getVerticalSpeed());
     }
 
     private void checkHitPoint()
     {
-        Vector3f destination = path.get(goingToIndex);
+        IPositionable destination = getPath().get(goingToIndex);
 
-        float diffX = Math.abs(destination.x - getX());
-        float diffY = Math.abs(destination.y - getY());
-
-        if (diffX < 0.1f && diffY < 0.1f)
+        float diffX = Math.abs(destination.getX() - getX());
+        float diffY = Math.abs(destination.getY() - getY());
+        float hitBias = getHitBias();
+        
+        if (diffX < hitBias && diffY < hitBias)
         {
 
 //            System.out.println("Hit a point " + destination);
 //            System.out.println("I'm at " + getX() + ", " + getY() + ", " + getZ());
-//            if (goingToIndex + 1 < path.size())
+//            if (goingToIndex + 1 < getPath().size())
 //            {
-//                System.out.println("Going to: " + path.get(goingToIndex + 1));
+//                System.out.println("Going to: " + getPath().get(goingToIndex + 1));
 //            }
 //            System.out.println("---");
             goingToIndex++;
             isLookingAtPoint = false;
 
-            setX(destination.x);
-            setY(destination.y);
-            setZ(destination.z);
+            setX(destination.getX());
+            setY(destination.getY());
+            setZ(destination.getZ());
+
+            if (goingToIndex >= getPath().size())
+            {
+                hitEndPath();
+            }
         }
+    }
+
+    private boolean isAtTheEnd()
+    {
+        return goingToIndex >= getPath().size();
     }
 }

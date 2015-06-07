@@ -7,6 +7,7 @@ import game.world.basic.GameEntity;
 import org.lwjgl.util.vector.Vector3f;
 import utils.constants.TextureConstants;
 import utils.constants.TileTypes;
+import utils.interfaces.IPositionable;
 
 public class Tile extends GameEntity
 {
@@ -16,11 +17,11 @@ public class Tile extends GameEntity
     public static String changeTo = TileTypes.PLANE_NAME;
     private int tileType;
 
-    public Vector3f[] getPath()
+    public IPositionable[] getPath()
     {
         return path;
     }
-    private Vector3f[] path;
+    private IPositionable[] path;
 
     public Tile(int tileType)
     {

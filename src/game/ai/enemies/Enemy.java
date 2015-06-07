@@ -2,16 +2,24 @@ package game.ai.enemies;
 
 import game.ai.MapSolver;
 import game.world.basic.MovingEntity;
+import gl.shaders.TransformShader;
 import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector3f;
+import utils.FloatMath;
 import utils.constants.EnemyTypes;
 import utils.constants.TextureConstants;
+import utils.geometry.Point3D;
 import utils.interfaces.IEnemy;
+import utils.interfaces.IPositionable;
 
 public class Enemy extends MovingEntity implements IEnemy
 {
 
+    private IPositionable projectileHit;
     private int health;
+    private boolean recentlyShot;
+    private int shotDuration;
+    private int timeSinceShot;
 
     public Enemy()
     {
@@ -19,21 +27,51 @@ public class Enemy extends MovingEntity implements IEnemy
         setTexture(TextureConstants.ENEMY_SET);
 
         health = 100;
+        shotDuration = 250;
+        
+        projectileHit = new Point3D(getX(), getY(), getZ() + 1.5f);
     }
 
     @Override
-    protected ArrayList<Vector3f> getPath()
+    public void draw()
     {
-        return MapSolver.finalPath;
+        if (recentlyShot)
+        {
+            float sine = FloatMath.sin(timeSinceShot / 50f);
+            TransformShader.shader().setOverlayColor(1, sine, sine);
+        }
+        else
+        {
+            TransformShader.shader().setOverlayColor(1, 1, 1);
+        }
+        super.draw(); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void update(int elapsedTime)
     {
-        if (isAlive())
+        if (recentlyShot)
         {
-            super.update(elapsedTime);
+            timeSinceShot += elapsedTime;
+
+            if (timeSinceShot >= shotDuration)
+            {
+                timeSinceShot = 0;
+                recentlyShot = false;
+            }
         }
+
+        projectileHit.setX(getX());
+        projectileHit.setY(getY());
+        projectileHit.setZ(getZ() + 1.5f);
+        
+        super.update(elapsedTime); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected ArrayList<IPositionable> getPath()
+    {
+        return MapSolver.finalPath;
     }
 
     @Override
@@ -41,6 +79,7 @@ public class Enemy extends MovingEntity implements IEnemy
     {
         if (isAlive())
         {
+            recentlyShot = true;
             health -= damage;
         }
     }
@@ -49,5 +88,34 @@ public class Enemy extends MovingEntity implements IEnemy
     public boolean isAlive()
     {
         return health > 0;
+    }
+
+    @Override
+    protected void hitEndPath()
+    {
+    }
+
+    @Override
+    protected float getHorizontalSpeed()
+    {
+        return 0.01f;
+    }
+
+    @Override
+    protected float getVerticalSpeed()
+    {
+        return 0.013f;
+    }
+
+    @Override
+    protected float getHitBias()
+    {
+        return 0.1f;
+    }
+
+    @Override
+    public IPositionable getProjectilePoint()
+    {
+        return projectileHit;
     }
 }

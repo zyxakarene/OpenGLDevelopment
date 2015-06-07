@@ -11,6 +11,7 @@ layout(binding=0) uniform sampler2D tex;
 layout(binding=1) uniform sampler2D shadowMap;
 uniform vec3 lightColor;
 uniform vec3 lightDirection;
+uniform vec3 overlayColor;
 
 uniform vec3 viewPos;
 
@@ -81,7 +82,7 @@ void main()
     float shadow = ShadowCalculation(FragPosLightSpace); 
     
     vec3 result = (ambient + (1.0 - shadow) * (diffuse + specular)) *  vec3(textureColor.r, textureColor.g, textureColor.b);
-    outColor = vec4(result, 1.0);
+    outColor = vec4(result * overlayColor, 1.0);
 
 // vec3 result = (ambient + diffuse + specular) *  vec3(textureColor.r, textureColor.g, textureColor.b); No shadow
 //outColor = vec4(vec3(gl_FragCoord.z), 1.0f); //Show debth buffer

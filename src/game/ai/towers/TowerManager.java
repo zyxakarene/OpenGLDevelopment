@@ -42,6 +42,11 @@ public class TowerManager implements IUpdateable, IDrawable, IShadowable
         {
             tower.draw();
         }
+        
+        for (ITower tower : towers)
+        {
+            tower.drawProjectiles();
+        }
     }
 
     @Override

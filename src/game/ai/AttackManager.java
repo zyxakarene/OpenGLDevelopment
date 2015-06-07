@@ -30,7 +30,12 @@ public class AttackManager implements IUpdateable
 
     private void findTargetFor(ITower tower)
     {
-        IEnemy target = findNearestEnemyTo(tower);
+        IEnemy target = tower.getCurrentTarget();
+        
+        if(target == null || target.isAlive() == false)
+        {
+            target = findNearestEnemyTo(tower);
+        }
 
         if (target != null)
         {
@@ -40,11 +45,17 @@ public class AttackManager implements IUpdateable
 
     private IEnemy findNearestEnemyTo(ITower tower)
     {
-        int distance = tower.getRange();
+        int maxDistance = tower.getRange();
+        
+        if (tower.hasTarget() && FloatMath.getDistance(tower, tower.getCurrentTarget()) <= maxDistance)
+        {
+            return tower.getCurrentTarget();
+        }
+                
         for (IEnemy enemy : enemies)
         {
             float newDistance = FloatMath.getDistance(tower, enemy);
-            if (newDistance < distance)
+            if (newDistance < maxDistance)
             {
                 return enemy;
             }

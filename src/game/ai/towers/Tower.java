@@ -1,7 +1,10 @@
 package game.ai.towers;
 
+import game.ai.towers.projectiles.Projectile;
 import game.world.basic.GameEntity;
+import java.util.ArrayList;
 import utils.FloatMath;
+import game.ai.towers.projectiles.ProjectileType;
 import utils.constants.TextureConstants;
 import utils.constants.TowerTypes;
 import utils.interfaces.IEnemy;
@@ -10,26 +13,25 @@ import utils.interfaces.ITower;
 
 public class Tower extends GameEntity implements ITower
 {
-    
+
     private int reloadTime;
     private int timeSinceLastShot;
+    private IEnemy currentTarget;
+    private ArrayList<Projectile> projectiles;
 
     public Tower()
     {
         setModel(TowerTypes.BASE);
         setTexture(TextureConstants.TOWER_BASE);
         reloadTime = 1000;
-    }
-
-    protected int getDamage()
-    {
-        return 20;
+        projectiles = new ArrayList<>();
+        timeSinceLastShot = reloadTime;
     }
 
     @Override
     public int getRange()
     {
-        //23 is aprox one time non diagonally
+        //23 is aprox one tile non diagonally
         return 23 * 3;
     }
 
@@ -37,6 +39,19 @@ public class Tower extends GameEntity implements ITower
     public void update(int elapsedTime)
     {
         timeSinceLastShot += elapsedTime;
+
+        Projectile projectile;
+        for(int i = 0; i < projectiles.size(); i++)
+        {
+            projectile = projectiles.get(i);
+            projectile.update(elapsedTime);
+            
+            if (projectile.hasHit())
+            {
+                projectiles.remove(i);
+                i--;
+            }
+        }
     }
 
     @Override
@@ -49,11 +64,12 @@ public class Tower extends GameEntity implements ITower
     public void shootAt(IEnemy enemy)
     {
         lookAt(enemy);
-        
+
         if (canFire())
         {
+            Projectile projectile = new Projectile(this, enemy, getProjectile());
             System.out.println(this + " shot at " + enemy);
-            enemy.attack(getDamage());
+            projectiles.add(projectile);
             timeSinceLastShot = 0;
         }
     }
@@ -62,9 +78,9 @@ public class Tower extends GameEntity implements ITower
     {
         float width = getY() - enemy.getY();
         float lenght = getX() - enemy.getX();
-        
+
         float newYaw;
-        
+
         if (Math.abs(enemy.getX() - getX()) <= 0.001)
         {
             if (enemy.getY() > getY())
@@ -90,7 +106,34 @@ public class Tower extends GameEntity implements ITower
                 newYaw = FloatMath.toDegrees(tempAngle);
             }
         }
-        
+
         setYaw(newYaw + 180);
+    }
+
+    @Override
+    public IEnemy getCurrentTarget()
+    {
+        return currentTarget;
+    }
+
+    @Override
+    public boolean hasTarget()
+    {
+        return currentTarget != null;
+    }
+
+    @Override
+    public void drawProjectiles()
+    {
+        for (Projectile projectile : projectiles)
+        {
+            projectile.draw();
+        }
+    }
+
+    @Override
+    public ProjectileType getProjectile()
+    {
+        return ProjectileType.ROCKET;
     }
 }
