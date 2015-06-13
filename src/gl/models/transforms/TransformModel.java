@@ -101,14 +101,26 @@ public class TransformModel extends ElementBuffer implements IShadowable, IClick
         super.draw();
     }
 
+    
+    private static final Vector3f ROTATION_PITCH = new Vector3f(1.0f, 0.0f, 0.0f);
+    private static final Vector3f ROTATION_ROLL = new Vector3f(0.0f, 1.0f, 0.0f);
+    private static final Vector3f ROTATION_YAW = new Vector3f(0.0f, 0.0f, 1.0f);
+    
+    private static final Vector3f TRANSLATE = new Vector3f();
+    private static final Vector3f SCALE = new Vector3f();
+    
     private void doTransformation()
     {
+        TRANSLATE.set(info.x, info.y, info.z);
+        SCALE.set(info.scale, info.scale, info.scale);
+        
         SHARED_TRANSFORM.setIdentity();
-        SHARED_TRANSFORM.translate(new Vector3f(info.x, info.y, info.z));
-        SHARED_TRANSFORM.rotate((float) Math.toRadians(info.pitch), new Vector3f(1.0f, 0.0f, 0.0f));
-        SHARED_TRANSFORM.rotate((float) Math.toRadians(info.roll), new Vector3f(0.0f, 1.0f, 0.0f));
-        SHARED_TRANSFORM.rotate((float) Math.toRadians(info.yaw), new Vector3f(0.0f, 0.0f, 1.0f));
-        SHARED_TRANSFORM.scale(new Vector3f(info.scale, info.scale, info.scale));
+        SHARED_TRANSFORM.translate(TRANSLATE);
+        SHARED_TRANSFORM.rotate((float) Math.toRadians(info.roll), ROTATION_ROLL);
+        SHARED_TRANSFORM.rotate((float) Math.toRadians(info.pitch), ROTATION_PITCH);
+        SHARED_TRANSFORM.rotate((float) Math.toRadians(info.yaw), ROTATION_YAW);
+        
+        SHARED_TRANSFORM.scale(SCALE);
     }
 
     public void setPositionInfo(Positioning positionInfo)

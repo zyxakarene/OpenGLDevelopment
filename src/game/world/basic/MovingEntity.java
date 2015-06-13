@@ -147,6 +147,39 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
         }
 
         setYaw(newYaw + 180);
+
+        setPitch(0);
+        setRoll(0);
+        
+        if (this instanceof Projectile)
+        {
+            System.out.println("Up/Down: " + degreesUpDown);
+        }
+        
+        if (degreesUpDown != 0)
+        {
+            if (newYaw == 180)
+            {
+                setRoll(-degreesUpDown);
+            }
+            else if (newYaw == -180)
+            {
+                setRoll(degreesUpDown + 90);
+            }
+            else if (newYaw == 90)
+            {
+                setPitch(degreesUpDown - 180);
+            }
+            else if (newYaw == 270)
+            {
+                setPitch(degreesUpDown);
+            }
+            else
+            {
+                setPitch(degreesUpDown);
+            }
+        }
+
         isLookingAtPoint = true;
     }
     
