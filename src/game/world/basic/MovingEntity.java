@@ -11,6 +11,7 @@ import utils.interfaces.IUpdateable;
 public abstract class MovingEntity extends GameEntity implements IUpdateable
 {
 
+    private float degreesLeftRight;
     private float degreesUpDown;
     private int goingToIndex;
     private boolean isLookingAtPoint;
@@ -34,6 +35,8 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
      * the last point on its path.
      */
     protected abstract void hitEndPath();
+    
+    protected abstract void updateEntityRotations(float rightLeft, float upDown, boolean toTheLeft);
 
     protected final void recalculateAngle()
     {
@@ -90,7 +93,6 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
         float lenght = getX() - destination.getX();
         float width = getY() - destination.getY();
         float height = getZ() - destination.getZ();
-        float newYaw;
 
         if (Math.abs(width + lenght + height) <= 0.1)
         {
@@ -103,11 +105,11 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
         {
             if (destination.getY() > getY())
             {
-                newYaw = 270;
+                degreesLeftRight = 270;
             }
             else
             {
-                newYaw = 90;
+                degreesLeftRight = 90;
             }
         }
         else
@@ -117,12 +119,17 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
 
             if (width < 0)
             {
-                newYaw = FloatMath.toDegrees(tempAngle - (tempAngle * 2));
+                degreesLeftRight = FloatMath.toDegrees(tempAngle - (tempAngle * 2));
             }
             else
             {
-                newYaw = FloatMath.toDegrees(tempAngle);
+                degreesLeftRight = FloatMath.toDegrees(tempAngle);
             }
+        }
+
+        if (degreesLeftRight > 360)
+        {
+            degreesLeftRight -= 360;
         }
 
         if (destination.getZ() == getZ())
@@ -146,52 +153,21 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
             }
         }
 
-        setYaw(newYaw + 180);
-
-        setPitch(0);
-        setRoll(0);
-        
-        if (this instanceof Projectile)
-        {
-            System.out.println("Up/Down: " + degreesUpDown);
-        }
-        
-        if (degreesUpDown != 0)
-        {
-            if (newYaw == 180)
-            {
-                setRoll(-degreesUpDown);
-            }
-            else if (newYaw == -180)
-            {
-                setRoll(degreesUpDown + 90);
-            }
-            else if (newYaw == 90)
-            {
-                setPitch(degreesUpDown - 180);
-            }
-            else if (newYaw == 270)
-            {
-                setPitch(degreesUpDown);
-            }
-            else
-            {
-                setPitch(degreesUpDown);
-            }
-        }
+        updateEntityRotations(degreesLeftRight, degreesUpDown, lenght > 0);
 
         isLookingAtPoint = true;
     }
-    
+
     protected abstract float getHorizontalSpeed();
+
     protected abstract float getVerticalSpeed();
+
     protected abstract float getHitBias();
-    
 
     private void moveTowardPoint(int elapsedTime)
     {
-        float dx = FloatMath.cos(FloatMath.toRadians(getYaw()));
-        float dy = FloatMath.sin(FloatMath.toRadians(getYaw()));
+        float dx = FloatMath.cos(FloatMath.toRadians(degreesLeftRight + 180));
+        float dy = FloatMath.sin(FloatMath.toRadians(degreesLeftRight + 180));
         float dZ = FloatMath.sin(FloatMath.toRadians(degreesUpDown));
 
         changeX(dx * elapsedTime * getHorizontalSpeed());
@@ -206,7 +182,7 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
         float diffX = Math.abs(destination.getX() - getX());
         float diffY = Math.abs(destination.getY() - getY());
         float hitBias = getHitBias();
-        
+
         if (diffX < hitBias && diffY < hitBias)
         {
 

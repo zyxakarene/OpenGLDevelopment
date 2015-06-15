@@ -43,6 +43,7 @@ public class ControlGui extends javax.swing.JFrame
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         pitchSlide.setMaximum(360);
+        pitchSlide.setMinimum(-360);
         pitchSlide.setValue(0);
         pitchSlide.addMouseMotionListener(new java.awt.event.MouseMotionAdapter()
         {
@@ -53,6 +54,9 @@ public class ControlGui extends javax.swing.JFrame
         });
 
         yawSlide.setMaximum(360);
+        yawSlide.setMinimum(-360);
+        yawSlide.setPaintLabels(true);
+        yawSlide.setPaintTicks(true);
         yawSlide.setValue(0);
         yawSlide.addMouseMotionListener(new java.awt.event.MouseMotionAdapter()
         {
@@ -63,6 +67,9 @@ public class ControlGui extends javax.swing.JFrame
         });
 
         rollSlide.setMaximum(360);
+        rollSlide.setMinimum(-360);
+        rollSlide.setPaintLabels(true);
+        rollSlide.setPaintTicks(true);
         rollSlide.setValue(0);
         rollSlide.addMouseMotionListener(new java.awt.event.MouseMotionAdapter()
         {
@@ -175,7 +182,7 @@ public class ControlGui extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(zSlide, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
-                .addContainerGap(109, Short.MAX_VALUE))
+                .addContainerGap(93, Short.MAX_VALUE))
         );
 
         pack();
@@ -194,6 +201,7 @@ public class ControlGui extends javax.swing.JFrame
     private void rollSlideMouseDragged(java.awt.event.MouseEvent evt)//GEN-FIRST:event_rollSlideMouseDragged
     {//GEN-HEADEREND:event_rollSlideMouseDragged
         entity.setRoll(rollSlide.getValue());
+        System.out.println(rollSlide.getValue());
     }//GEN-LAST:event_rollSlideMouseDragged
 
     private void zSlideMouseDragged(java.awt.event.MouseEvent evt)//GEN-FIRST:event_zSlideMouseDragged

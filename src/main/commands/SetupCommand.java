@@ -8,6 +8,7 @@ import gl.models.ModelManager;
 import gl.shaders.ShaderLoader;
 import gl.textures.TextureManager;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.ContextAttribs;
@@ -33,7 +34,7 @@ public class SetupCommand implements ICommand
             setupLwjgl();
             setupGameResources();
         }
-        catch (LWJGLException | IOException ex)
+        catch (LWJGLException | IOException | URISyntaxException ex)
         {
             Msg.error("Fatal exception in SetupCommand", ex);            
             System.exit(-1);
@@ -55,7 +56,7 @@ public class SetupCommand implements ICommand
         GLUtils.enableGLSettings();
     }
 
-    private void setupGameResources() throws IOException
+    private void setupGameResources() throws IOException, URISyntaxException
     {
         ShaderLoader.loadShaders();
         TextureManager.initTextures();

@@ -25,7 +25,7 @@ public class Projectile extends MovingEntity
         setModel(type.model);
         setTexture(type.texture);
         setScale(0.4f);
-        
+
         setPos(shooter.getX(), shooter.getY(), shooter.getZ() + 1.5f);
     }
 
@@ -60,15 +60,30 @@ public class Projectile extends MovingEntity
     {
         return 0.013f * 3;
     }
-    
+
     @Override
     protected float getHitBias()
     {
         return 0.5f;
     }
-    
+
     public boolean hasHit()
     {
         return hasHit;
+    }
+
+    @Override
+    protected void updateEntityRotations(float rightLeft, float upDown, boolean toTheLeft)
+    {
+        setRoll(-upDown);
+        
+        if (toTheLeft)
+        {
+            setYaw(rightLeft);
+        }
+        else
+        {
+            setYaw(rightLeft + 180);
+        }
     }
 }

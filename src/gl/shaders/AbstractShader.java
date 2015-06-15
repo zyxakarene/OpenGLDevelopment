@@ -1,9 +1,10 @@
 package gl.shaders;
 
 import gl.glUtils.ShaderControls;
-import gl.shaders.SharedShaderObjects;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.FloatBuffer;
 import java.util.Scanner;
 import org.lwjgl.BufferUtils;
@@ -22,7 +23,7 @@ public abstract class AbstractShader
     {
     }
 
-    final void load() throws FileNotFoundException
+    final void load() throws FileNotFoundException, URISyntaxException
     {
         vertexShader = ShaderControls.generateVertexShader();
         ShaderControls.createShaderFrom(vertexShader, loadFile(getVertexName()));
@@ -64,19 +65,20 @@ public abstract class AbstractShader
         return shaderProgram;
     }
 
-    private static String loadFile(String name) throws FileNotFoundException
+    private static String loadFile(String name) throws FileNotFoundException, URISyntaxException
     {
         StringBuilder builder = new StringBuilder();
 
-        File file = new File("src/gl/shaders/source/" + name);
+        InputStream input = AbstractShader.class.getResourceAsStream("/gl/shaders/source/" + name);
+        
 
-        Scanner scan = new Scanner(file);
-
-        while (scan.hasNextLine())
+        Scanner fileScan = new Scanner(input);
+        while (fileScan.hasNextLine())
         {
-            builder.append(scan.nextLine());
+             builder.append(fileScan.nextLine());
             builder.append("\n");
         }
+        fileScan.close();
 
         return builder.toString();
     }

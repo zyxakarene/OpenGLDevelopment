@@ -12,7 +12,11 @@ public class TransformShader extends AbstractShader
     private int lightColUniform;
     private int viewUniform;
     private int projectUniform;
-    private int modelUniform;
+    private int modelUniform_scale;
+    private int modelUniform_rotate_x;
+    private int modelUniform_rotate_y;
+    private int modelUniform_rotate_z;
+    private int modelUniform_transform;
     private int texUniform;
     private int lightViewUniform;
     private int lightProjUniform;
@@ -28,7 +32,11 @@ public class TransformShader extends AbstractShader
     protected void setupUniforms()
     {
         texUniform = ShaderControls.createUniform(shaderProgram, "tex");
-        modelUniform = ShaderControls.createUniform(shaderProgram, "model");
+        modelUniform_scale = ShaderControls.createUniform(shaderProgram, "model_scale");
+        modelUniform_rotate_z = ShaderControls.createUniform(shaderProgram, "model_rotate_z");
+        modelUniform_rotate_y = ShaderControls.createUniform(shaderProgram, "model_rotate_y");
+        modelUniform_rotate_x = ShaderControls.createUniform(shaderProgram, "model_rotate_x");
+        modelUniform_transform = ShaderControls.createUniform(shaderProgram, "model_translate");
         viewUniform = ShaderControls.createUniform(shaderProgram, "view");
         projectUniform = ShaderControls.createUniform(shaderProgram, "proj");
         lightColUniform = ShaderControls.createUniform(shaderProgram, "lightColor");
@@ -85,12 +93,40 @@ public class TransformShader extends AbstractShader
         ShaderControls.setUniform3F(lightDirectionUniform, pitch, roll, yaw);
     }
 
-    public void updateModelUniform()
+    public void updateModelUniformSCALE()
     {
         uniformBuffer.clear();
         SHARED_MODEL_TRANSFORM.store(uniformBuffer);
         uniformBuffer.flip();
-        ShaderControls.setUniformMatrix(modelUniform, uniformBuffer);
+        ShaderControls.setUniformMatrix(modelUniform_scale, uniformBuffer);
+    }
+    public void updateModelUniformROTATE_X()
+    {
+        uniformBuffer.clear();
+        SHARED_MODEL_TRANSFORM.store(uniformBuffer);
+        uniformBuffer.flip();
+        ShaderControls.setUniformMatrix(modelUniform_rotate_x, uniformBuffer);
+    }
+    public void updateModelUniformROTATE_Y()
+    {
+        uniformBuffer.clear();
+        SHARED_MODEL_TRANSFORM.store(uniformBuffer);
+        uniformBuffer.flip();
+        ShaderControls.setUniformMatrix(modelUniform_rotate_y, uniformBuffer);
+    }
+    public void updateModelUniformROTATE_Z()
+    {
+        uniformBuffer.clear();
+        SHARED_MODEL_TRANSFORM.store(uniformBuffer);
+        uniformBuffer.flip();
+        ShaderControls.setUniformMatrix(modelUniform_rotate_z, uniformBuffer);
+    }
+    public void updateModelUniformTRANSLATE()
+    {
+        uniformBuffer.clear();
+        SHARED_MODEL_TRANSFORM.store(uniformBuffer);
+        uniformBuffer.flip();
+        ShaderControls.setUniformMatrix(modelUniform_transform, uniformBuffer);
     }
 
     public void setupProjection(Matrix4f matrix)

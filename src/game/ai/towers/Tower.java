@@ -32,7 +32,7 @@ public class Tower extends GameEntity implements ITower
     public int getRange()
     {
         //23 is aprox one tile non diagonally
-        return 23 * 3;
+        return 23 * 7;
     }
 
     @Override
@@ -68,7 +68,6 @@ public class Tower extends GameEntity implements ITower
         if (canFire())
         {
             Projectile projectile = new Projectile(this, enemy, getProjectile());
-            System.out.println(this + " shot at " + enemy);
             projectiles.add(projectile);
             timeSinceLastShot = 0;
         }

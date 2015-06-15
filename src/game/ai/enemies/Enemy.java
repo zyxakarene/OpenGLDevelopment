@@ -4,7 +4,6 @@ import game.ai.MapSolver;
 import game.world.basic.MovingEntity;
 import gl.shaders.TransformShader;
 import java.util.ArrayList;
-import org.lwjgl.util.vector.Vector3f;
 import utils.FloatMath;
 import utils.constants.EnemyTypes;
 import utils.constants.TextureConstants;
@@ -28,7 +27,7 @@ public class Enemy extends MovingEntity implements IEnemy
 
         health = 100;
         shotDuration = 250;
-        
+
         projectileHit = new Point3D(getX(), getY(), getZ() + 1.5f);
     }
 
@@ -64,7 +63,7 @@ public class Enemy extends MovingEntity implements IEnemy
         projectileHit.setX(getX());
         projectileHit.setY(getY());
         projectileHit.setZ(getZ() + 1.5f);
-        
+
         super.update(elapsedTime); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -117,5 +116,40 @@ public class Enemy extends MovingEntity implements IEnemy
     public IPositionable getProjectilePoint()
     {
         return projectileHit;
+    }
+
+    @Override
+    protected void updateEntityRotations(float yaw, float roll, boolean toTheLeft)
+    {
+        setYaw(yaw + 180);
+
+        //TODO: Fix
+        if (lookVertically() && false)
+        {
+            if (roll != 0)
+            {
+                if (yaw == 180)
+                {
+                    setRoll(-roll);
+                }
+                else if (yaw == -180)
+                {
+                    setRoll(roll + 90);
+                }
+                else if (yaw == 90)
+                {
+                    setPitch(roll - 180);
+                }
+                else if (yaw == 270)
+                {
+                    setPitch(roll);
+                }
+            }
+        }
+    }
+
+    protected boolean lookVertically()
+    {
+        return true;
     }
 }

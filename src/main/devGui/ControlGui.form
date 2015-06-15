@@ -94,7 +94,7 @@
                   <Component id="zSlide" alignment="1" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel6" alignment="1" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="109" max="32767" attributes="0"/>
+              <EmptySpace pref="93" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -103,6 +103,7 @@
     <Component class="javax.swing.JSlider" name="pitchSlide">
       <Properties>
         <Property name="maximum" type="int" value="360"/>
+        <Property name="minimum" type="int" value="-360"/>
         <Property name="value" type="int" value="0"/>
       </Properties>
       <Events>
@@ -112,6 +113,9 @@
     <Component class="javax.swing.JSlider" name="yawSlide">
       <Properties>
         <Property name="maximum" type="int" value="360"/>
+        <Property name="minimum" type="int" value="-360"/>
+        <Property name="paintLabels" type="boolean" value="true"/>
+        <Property name="paintTicks" type="boolean" value="true"/>
         <Property name="value" type="int" value="0"/>
       </Properties>
       <Events>
@@ -121,6 +125,9 @@
     <Component class="javax.swing.JSlider" name="rollSlide">
       <Properties>
         <Property name="maximum" type="int" value="360"/>
+        <Property name="minimum" type="int" value="-360"/>
+        <Property name="paintLabels" type="boolean" value="true"/>
+        <Property name="paintTicks" type="boolean" value="true"/>
         <Property name="value" type="int" value="0"/>
       </Properties>
       <Events>

@@ -1,6 +1,7 @@
 package gl.shaders;
 
 import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 
 public class ShaderLoader
@@ -9,7 +10,7 @@ public class ShaderLoader
     private static final HashMap<ShaderType, AbstractShader> shaderMap = new HashMap<>();
     private static ShaderType currentShader;
 
-    public static void loadShaders() throws FileNotFoundException
+    public static void loadShaders() throws FileNotFoundException, URISyntaxException
     {
         AbstractShader transformShader = new TransformShader();
         transformShader.load();

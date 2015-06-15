@@ -89,14 +89,14 @@ public class TransformModel extends ElementBuffer implements IShadowable, IClick
     public void draw()
     {
         doTransformation();
-        TransformShader.shader().updateModelUniform();
+//        TransformShader.shader().updateModelUniform();
         super.draw();
     }
     
     @Override
     public void drawClick()
     {
-        doTransformation();
+        doSimpleTransformation();
         ClickShader.shader().updateModelUniform();
         super.draw();
     }
@@ -109,7 +109,7 @@ public class TransformModel extends ElementBuffer implements IShadowable, IClick
     private static final Vector3f TRANSLATE = new Vector3f();
     private static final Vector3f SCALE = new Vector3f();
     
-    private void doTransformation()
+    private void doSimpleTransformation()
     {
         TRANSLATE.set(info.x, info.y, info.z);
         SCALE.set(info.scale, info.scale, info.scale);
@@ -122,6 +122,32 @@ public class TransformModel extends ElementBuffer implements IShadowable, IClick
         
         SHARED_TRANSFORM.scale(SCALE);
     }
+    
+    private void doTransformation()
+    {
+        TRANSLATE.set(info.x, info.y, info.z);
+        SCALE.set(info.scale, info.scale, info.scale);
+        
+        SHARED_TRANSFORM.setIdentity();
+        SHARED_TRANSFORM.translate(TRANSLATE);
+        TransformShader.shader().updateModelUniformTRANSLATE();
+        
+        SHARED_TRANSFORM.setIdentity();
+        SHARED_TRANSFORM.rotate((float) Math.toRadians(info.roll), ROTATION_ROLL);
+        TransformShader.shader().updateModelUniformROTATE_Y();
+        
+        SHARED_TRANSFORM.setIdentity();
+        SHARED_TRANSFORM.rotate((float) Math.toRadians(info.pitch), ROTATION_PITCH);
+        TransformShader.shader().updateModelUniformROTATE_X();
+        
+        SHARED_TRANSFORM.setIdentity();
+        SHARED_TRANSFORM.rotate((float) Math.toRadians(info.yaw), ROTATION_YAW);
+        TransformShader.shader().updateModelUniformROTATE_Z();
+        
+        SHARED_TRANSFORM.setIdentity();
+        SHARED_TRANSFORM.scale(SCALE);
+        TransformShader.shader().updateModelUniformSCALE();
+    }
 
     public void setPositionInfo(Positioning positionInfo)
     {
@@ -131,7 +157,7 @@ public class TransformModel extends ElementBuffer implements IShadowable, IClick
     @Override
     public void drawShadow()
     {
-        doTransformation();
+        doSimpleTransformation();
         SimpleDepthShader.shader().updateModelUniform();
         super.draw();
     }
