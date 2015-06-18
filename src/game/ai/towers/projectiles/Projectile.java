@@ -1,5 +1,7 @@
 package game.ai.towers.projectiles;
 
+import game.sound.SoundManager;
+import game.sound.Sounds;
 import game.world.basic.MovingEntity;
 import java.util.ArrayList;
 import utils.interfaces.IEnemy;
@@ -27,6 +29,8 @@ public class Projectile extends MovingEntity
         setScale(0.4f);
 
         setPos(shooter.getX(), shooter.getY(), shooter.getZ() + 1.5f);
+        
+        SoundManager.playSound(Sounds.ROCKET_FLY, this);
     }
 
     @Override
@@ -47,6 +51,8 @@ public class Projectile extends MovingEntity
     {
         target.attack(type.damage);
         hasHit = true;
+        SoundManager.stopSoundFrom(this);
+        SoundManager.playSound(Sounds.EXPLOSION, target);
     }
 
     @Override

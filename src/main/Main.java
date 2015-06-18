@@ -12,6 +12,7 @@ import org.lwjgl.opengl.Display;
 import main.commands.SetupCommand;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.newdawn.slick.openal.SoundStore;
 import utils.constants.GameConstants;
 
 public class Main
@@ -82,5 +83,7 @@ public class Main
         {
             world.update(mspPerFrame);
         }
+        
+         SoundStore.get().poll(elapsedTime);
     }
 }

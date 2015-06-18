@@ -5,6 +5,8 @@ import game.world.basic.GameEntity;
 import java.util.ArrayList;
 import utils.FloatMath;
 import game.ai.towers.projectiles.ProjectileType;
+import game.sound.SoundManager;
+import game.sound.Sounds;
 import utils.constants.TextureConstants;
 import utils.constants.TowerTypes;
 import utils.interfaces.IEnemy;
@@ -32,7 +34,7 @@ public class Tower extends GameEntity implements ITower
     public int getRange()
     {
         //23 is aprox one tile non diagonally
-        return 23 * 7;
+        return 23 * 7 * 100;
     }
 
     @Override
@@ -67,6 +69,7 @@ public class Tower extends GameEntity implements ITower
 
         if (canFire())
         {
+            SoundManager.playSound(Sounds.ROCKET_LAUNCH, this);
             Projectile projectile = new Projectile(this, enemy, getProjectile());
             projectiles.add(projectile);
             timeSinceLastShot = 0;

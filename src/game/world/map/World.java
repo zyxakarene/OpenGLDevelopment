@@ -7,6 +7,7 @@ import game.ai.towers.TowerManager;
 import game.camera.Camera;
 import game.control.KeyboardControl;
 import game.control.clicker.ClickRegistrator;
+import game.sound.SoundManager;
 import game.world.Hud;
 import game.world.io.MapLoader;
 import game.world.io.MapSaver;
@@ -130,7 +131,8 @@ public class World implements IDrawable, IUpdateable
     {
         EnemyManager.instance.update(elapsedTime);
         TowerManager.instance.update(elapsedTime);
-        
+
         AttackManager.instance.update(elapsedTime);
+        SoundManager.update(elapsedTime);
     }
 }

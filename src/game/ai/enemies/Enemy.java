@@ -1,6 +1,8 @@
 package game.ai.enemies;
 
 import game.ai.MapSolver;
+import game.sound.SoundManager;
+import game.sound.Sounds;
 import game.world.basic.MovingEntity;
 import gl.shaders.TransformShader;
 import java.util.ArrayList;
@@ -29,6 +31,8 @@ public class Enemy extends MovingEntity implements IEnemy
         shotDuration = 250;
 
         projectileHit = new Point3D(getX(), getY(), getZ() + 1.5f);
+        
+        SoundManager.playSound(Sounds.ENEMY, this);
     }
 
     @Override
@@ -48,7 +52,7 @@ public class Enemy extends MovingEntity implements IEnemy
 
     @Override
     public void update(int elapsedTime)
-    {
+    {        
         if (recentlyShot)
         {
             timeSinceShot += elapsedTime;
@@ -80,6 +84,11 @@ public class Enemy extends MovingEntity implements IEnemy
         {
             recentlyShot = true;
             health -= damage;
+            
+            if (isAlive() == false)
+            {
+                SoundManager.stopSoundFrom(this);
+            }
         }
     }
 

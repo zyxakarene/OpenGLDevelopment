@@ -23,6 +23,10 @@
 		<copy todir="${dist.dir}/natives">
             <fileset dir="natives" />
         </copy>
+		
+		<copy todir="${dist.dir}/audio">
+            <fileset dir="audio" />
+        </copy>
     </target> 
 	
     <!--
