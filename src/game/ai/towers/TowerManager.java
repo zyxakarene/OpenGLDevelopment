@@ -1,6 +1,5 @@
 package game.ai.towers;
 
-import game.world.map.Tile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

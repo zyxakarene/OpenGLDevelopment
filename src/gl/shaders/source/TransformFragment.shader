@@ -9,6 +9,8 @@ out vec4 outColor;
 
 layout(binding=0) uniform sampler2D tex;
 layout(binding=1) uniform sampler2D shadowMap;
+layout(binding=2) uniform sampler2D normalMap;
+
 uniform vec3 lightColor;
 uniform vec3 lightDirection;
 uniform vec3 overlayColor;
@@ -59,7 +61,14 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 
 void main()
 {
-    vec3 norm = normalize(Normal);
+    vec3 normVertex = normalize(Normal);
+
+    vec3 norm = texture(normalMap, vec2(Texcoord.x, -Texcoord.y)).rgb;
+
+    norm = norm + normVertex;
+
+    norm = normalize(norm * 2.0 - 1.0); 
+
     vec3 lightDir = normalize(-lightDirection);
 
     float specularStrength = 0.5f;

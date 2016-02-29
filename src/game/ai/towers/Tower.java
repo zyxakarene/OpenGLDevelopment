@@ -27,14 +27,14 @@ public class Tower extends GameEntity implements ITower
         setTexture(TextureConstants.TOWER_BASE);
         reloadTime = 1000;
         projectiles = new ArrayList<>();
-        timeSinceLastShot = reloadTime;
+        timeSinceLastShot = reloadTime;        
     }
 
     @Override
     public int getRange()
     {
         //23 is aprox one tile non diagonally
-        return 23 * 7 * 100;
+        return 23 * 7;
     }
 
     @Override

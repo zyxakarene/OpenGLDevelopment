@@ -1,9 +1,10 @@
 package game.ai.towers.projectiles;
 
+import game.camera.Camera;
 import game.sound.SoundManager;
-import game.sound.Sounds;
 import game.world.basic.MovingEntity;
 import java.util.ArrayList;
+import utils.FloatMath;
 import utils.interfaces.IEnemy;
 import utils.interfaces.IPositionable;
 import utils.interfaces.ITower;
@@ -29,8 +30,9 @@ public class Projectile extends MovingEntity
         setScale(0.4f);
 
         setPos(shooter.getX(), shooter.getY(), shooter.getZ() + 1.5f);
-        
-        SoundManager.playSound(Sounds.ROCKET_FLY, this);
+
+        SoundManager.playSound(type.getFireSound(), this);
+        SoundManager.playSound(type.getFlySound(), this);
     }
 
     @Override
@@ -52,7 +54,13 @@ public class Projectile extends MovingEntity
         target.attack(type.damage);
         hasHit = true;
         SoundManager.stopSoundFrom(this);
-        SoundManager.playSound(Sounds.EXPLOSION, target);
+        SoundManager.playSound(type.getHitSound(), target);
+
+        float distanceToCamera = FloatMath.getDistance(this, Camera.position());
+        if (distanceToCamera <= 500)
+        {
+            Camera.shakeFor(250);
+        }
     }
 
     @Override
@@ -82,7 +90,7 @@ public class Projectile extends MovingEntity
     protected void updateEntityRotations(float rightLeft, float upDown, boolean toTheLeft)
     {
         setRoll(-upDown);
-        
+
         if (toTheLeft)
         {
             setYaw(rightLeft);

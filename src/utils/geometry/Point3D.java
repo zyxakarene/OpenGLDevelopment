@@ -62,4 +62,12 @@ public class Point3D implements IPositionable
     {
         this.z = z;
     }
+
+    @Override
+    public void setPos(float x, float y, float z)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
 }

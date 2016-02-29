@@ -1,7 +1,6 @@
 package gl.shaders;
 
 import gl.glUtils.ShaderControls;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -10,7 +9,7 @@ import java.util.Scanner;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix4f;
 
-public abstract class AbstractShader
+abstract class AbstractShader
 {
 
     protected static final Matrix4f SHARED_VIEW_TRANSFORM = SharedShaderObjects.SHARED_VIEW_TRANSFORM;

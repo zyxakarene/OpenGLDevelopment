@@ -4,6 +4,8 @@ import game.control.ElapsedTime;
 import game.control.KeyboardControl;
 import game.control.MouseControl;
 import gl.shaders.ClickShader;
+import gl.shaders.LineShader;
+import gl.shaders.PhysShader;
 import gl.shaders.SharedShaderObjects;
 import gl.shaders.ShaderLoader;
 import gl.shaders.ShaderType;
@@ -16,11 +18,15 @@ import org.lwjgl.util.vector.Matrix4f;
 import utils.FloatMath;
 
 import static org.lwjgl.opengl.GL11.*;
+import utils.geometry.Point3D;
+import utils.interfaces.IPositionable;
 
 public class Camera
 {
 
     private static final Matrix4f SHARED_VIEW_TRANSFORM = SharedShaderObjects.SHARED_VIEW_TRANSFORM;
+    private static final IPositionable POSITION = new Point3D(0, 0, 0);
+    
     public static final int FORWARD = 1;
     public static final int BACKWARD = 2;
     public static final int RIGHT = 3;
@@ -35,6 +41,8 @@ public class Camera
     private static float screenWidth;
     private static float screenHeight;
     private static boolean isPerspective;
+    private static int shakeTimer;
+    private static float shakeZ;
 
     public static void create(Vector3f pos, int height, int width)
     {
@@ -43,11 +51,11 @@ public class Camera
 
     public static Vector3f getDir()
     {
-        float dX = FloatMath.sin(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90)) * 10.5f;
-        float dY = FloatMath.cos(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90)) * 10.5f;
-        float dZ = FloatMath.cos(FloatMath.toRadians(pitch)) * 10.5f;
+        float dX = FloatMath.sin(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90));
+        float dY = FloatMath.cos(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90));
+        float dZ = FloatMath.cos(FloatMath.toRadians(pitch));
 
-        Vector3f f = new Vector3f(-(x - dX), -(y - dY), -(z + dZ));
+        Vector3f f = new Vector3f(dX, dY, dZ);
         return f;
     }
 
@@ -65,7 +73,7 @@ public class Camera
 
         Matrix4f projectionView = perspective(70f, screenWidth / screenHeight, 0.01f, 2f);
         updateProjection(projectionView);
-        
+
         KeyboardControl.listenForHolding(Keyboard.KEY_W);
         KeyboardControl.listenForHolding(Keyboard.KEY_S);
         KeyboardControl.listenForHolding(Keyboard.KEY_A);
@@ -151,18 +159,25 @@ public class Camera
 
         ShaderLoader.activateShader(ShaderType.SKYBOX);
         SkyboxShader.shader().updateViewUniform();
-        
+
         updateViewTranslation();
-        
+
         ShaderLoader.activateShader(ShaderType.TRANSFORM);
         TransformShader.shader().updateViewUniform();
         TransformShader.shader().setViewPos(-x, -y, -z);
 
+        ShaderLoader.activateShader(ShaderType.PHYS);
+        PhysShader.shader().updateViewUniform();
+        PhysShader.shader().setViewPos(-x, -y, -z);
+        
         ShaderLoader.activateShader(ShaderType.CLICK);
         ClickShader.shader().updateViewUniform();
         
-        
-        
+        ShaderLoader.activateShader(ShaderType.LINE);
+        LineShader.shader().updateViewUniform();
+
+
+
 
 //        if (!isPerspective)
 //        {
@@ -196,13 +211,20 @@ public class Camera
 
         ShaderLoader.activateShader(ShaderType.TRANSFORM);
         TransformShader.shader().setupProjection(projection);
+        
+        ShaderLoader.activateShader(ShaderType.PHYS);
+        PhysShader.shader().setupProjection(projection);
 
         ShaderLoader.activateShader(ShaderType.SKYBOX);
         SkyboxShader.shader().setupProjection(projection);
+        
+        ShaderLoader.activateShader(ShaderType.LINE);
+        LineShader.shader().setupProjection(projection);
     }
 
     private static Matrix4f perspective(float fov, float aspect, float near, float far)
     {
+        far *= 30;
         isPerspective = true;
 
         Matrix4f m = new Matrix4f();
@@ -245,30 +267,16 @@ public class Camera
         return OrthoMatrix;
     }
 
-//    private static void updateView()
-//    {
-//        SHARED_VIEW_TRANSFORM.setIdentity();
-//        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(pitch), new Vector3f(1, 0, 0));
-//        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(roll), new Vector3f(0, 1, 0));
-//        SHARED_VIEW_TRANSFORM.rotate(FloatMath.toRadians(yaw), new Vector3f(0, 0, 1));
-//        SHARED_VIEW_TRANSFORM.translate(new Vector3f(x, y, z));
-//
-//        float dX = FloatMath.sin(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90)) * 0.1f;
-//        float dY = FloatMath.cos(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90)) * 0.1f;
-//        float dZ = FloatMath.cos(FloatMath.toRadians(pitch)) * 0.1f;
-//        SHARED_VIEW_TRANSFORM.translate(new Vector3f(-dX * 10, -dY * 10, dZ * 10));
-//    }
-    
     private static void updateViewTranslation()
     {
         SHARED_VIEW_TRANSFORM.translate(new Vector3f(x, y, z));
 
         float dX = FloatMath.sin(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90)) * 0.1f;
         float dY = FloatMath.cos(FloatMath.toRadians(yaw)) * FloatMath.cos(FloatMath.toRadians(pitch + 90)) * 0.1f;
-        float dZ = FloatMath.cos(FloatMath.toRadians(pitch)) * 0.1f;
+        float dZ = FloatMath.cos(FloatMath.toRadians(pitch + shakeZ)) * 0.1f;
         SHARED_VIEW_TRANSFORM.translate(new Vector3f(-dX * 10, -dY * 10, dZ * 10));
     }
-    
+
     private static void updateViewRotation()
     {
         SHARED_VIEW_TRANSFORM.setIdentity();
@@ -291,6 +299,12 @@ public class Camera
     {
         return z;
     }
+    
+    public static IPositionable position()
+    {
+        POSITION.setPos(-x, -y, -z);
+        return POSITION;
+    }
 
     public static void clearViewWhite()
     {
@@ -303,7 +317,7 @@ public class Camera
         glClearColor(0.4f, 0.6f, 0.9f, 0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
-    
+
     public static void clearDepth()
     {
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -313,14 +327,33 @@ public class Camera
     {
         moveSpeed = keyDown ? 1 : 0.2f;
     }
-
-    public static void update()
+    
+    public static void shakeFor(int shakeTimeInMs)
     {
+        if (shakeTimer <= shakeTimeInMs)
+        {
+            shakeTimer = shakeTimeInMs;
+        }
+    }
+
+    public static void update(int elapsedTime)
+    {
+        if (shakeTimer > 0)
+        {
+            shakeTimer -= elapsedTime;
+            if (shakeTimer <= 0)
+            {
+                shakeTimer = 0;
+            }
+            
+            shakeZ = FloatMath.sin(shakeTimer) * 3;
+        }
+
         if (KeyboardControl.wasKeyPressed(Keyboard.KEY_Z))
         {
             Mouse.setGrabbed(!Mouse.isGrabbed());
         }
-        
+
         if (Mouse.isGrabbed())
         {
             int dx = MouseControl.getMovementX();
@@ -338,7 +371,7 @@ public class Camera
         {
             move(Camera.BACKWARD);
         }
-        
+
         if (KeyboardControl.isKeyDown(Keyboard.KEY_D))
         {
             move(Camera.RIGHT);

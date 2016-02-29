@@ -1,10 +1,9 @@
 package main;
 
-import game.camera.Camera;
 import game.control.ElapsedTime;
 import game.control.KeyboardControl;
 import game.control.MouseControl;
-import game.world.map.World;
+import game.state.GameStateManager;
 import gl.glUtils.FPSCounter;
 import java.io.IOException;
 import org.lwjgl.LWJGLException;
@@ -18,7 +17,6 @@ import utils.constants.GameConstants;
 public class Main
 {
 
-    private static World world;
     private static int spilloverMs;
 
     public static void main(String[] args) throws LWJGLException, IOException
@@ -29,9 +27,7 @@ public class Main
 
     private static void mainLogic() throws LWJGLException, IOException
     {
-        world = new World();
-
-//        new EditGui().setVisible(true);
+        GameStateManager.instance.setPlayState();
 
         while (!Display.isCloseRequested())
         {
@@ -41,11 +37,8 @@ public class Main
             MouseControl.check();
             KeyboardControl.checkKeys();
 
-            Camera.update();
-
-            world.update();
             update();
-            world.draw();
+            GameStateManager.instance.draw();
 
             FPSCounter.updateFPS();
 
@@ -81,9 +74,9 @@ public class Main
         }
         for (int i = 0; i < parts; i++)
         {
-            world.update(mspPerFrame);
+            GameStateManager.instance.update(mspPerFrame);
         }
-        
-         SoundStore.get().poll(elapsedTime);
+
+        SoundStore.get().poll(elapsedTime);
     }
 }

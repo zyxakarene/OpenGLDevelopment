@@ -17,11 +17,14 @@ public class TransformShader extends AbstractShader
     private int modelUniform_rotate_y;
     private int modelUniform_rotate_z;
     private int modelUniform_transform;
-    private int texUniform;
     private int lightViewUniform;
     private int lightProjUniform;
-    private int shadowMap;
+    
     private int overlayUniform;
+    
+    private int normalMap;
+    private int shadowMap;
+    private int texUniform;
 
     TransformShader()
     {
@@ -31,6 +34,7 @@ public class TransformShader extends AbstractShader
     @Override
     protected void setupUniforms()
     {
+        normalMap = ShaderControls.createUniform(shaderProgram, "normalMap");
         texUniform = ShaderControls.createUniform(shaderProgram, "tex");
         modelUniform_scale = ShaderControls.createUniform(shaderProgram, "model_scale");
         modelUniform_rotate_z = ShaderControls.createUniform(shaderProgram, "model_rotate_z");
@@ -59,6 +63,7 @@ public class TransformShader extends AbstractShader
         
         ShaderControls.setUniform1I(texUniform, 0);
         ShaderControls.setUniform1I(shadowMap, 1);
+        ShaderControls.setUniform1I(normalMap, 2);
     }
 
     @Override

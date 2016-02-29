@@ -21,6 +21,11 @@ public class ShaderControls
         glUniform1i(uniform, location);
     }
     
+    public static void setUniform2F(int uniform, float a, float b)
+    {
+        glUniform2f(uniform, a, b);
+    }
+    
     public static void setUniform3F(int uniform, float a, float b, float c)
     {
         glUniform3f(uniform, a, b, c);
@@ -89,6 +94,8 @@ public class ShaderControls
             String error = glGetShaderInfoLog(shaderId, 512);
             String errorMsg = String.format("A shader was not compiled correctly:\n%s", error);
             Logger.getLogger("Shader Logger").log(Level.SEVERE, errorMsg);
+            
+            System.exit(-1);
         }
     }
     

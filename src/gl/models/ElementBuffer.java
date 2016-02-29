@@ -6,8 +6,8 @@ import org.lwjgl.opengl.GL11;
 public abstract class ElementBuffer extends AbstractModel
 {
 
-    private int ebo;
-    private int elementCount;
+    protected int ebo;
+    protected int elementCount;
 
     public ElementBuffer()
     {

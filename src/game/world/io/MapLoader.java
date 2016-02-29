@@ -1,5 +1,6 @@
 package game.world.io;
 
+import game.ai.MapSolver;
 import game.world.map.Tile;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,12 +10,39 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import utils.constants.TileTypes;
 import utils.exceptions.Msg;
+import utils.interfaces.IPositionable;
 
 public class MapLoader
 {
     private int laneCount;
     private int planeCount;
     
+    /*
+     * Map format:
+     * int - startX
+     * int - startY
+     * int - MapWidth
+     * int - MapHeight
+     * Tile[mapWidth * MapHeight] - MapTiles
+     * int - pathCount
+     * Path[pathCount] - PathNodes
+     */
+    
+    /*
+     * Tile
+     * {
+     *    byte - Type
+     *    byte - Height
+     *    byte - Angle
+     * }
+     * 
+     * Path
+     * {
+     *    float - X
+     *    float - Y
+     *    float - Z
+     * }
+     */
 
     public Tile[][] loadMap(String name)
     {
@@ -39,6 +67,9 @@ public class MapLoader
 
     private Tile[][] createMapFromBuffer(ByteBuffer buffer)
     {
+        int startX = buffer.getInt();
+        int startY = buffer.getInt();
+        
         int width = buffer.getInt();
         int height = buffer.getInt();
 
@@ -63,6 +94,14 @@ public class MapLoader
                     planeCount++;
                 }
             }
+        }
+        
+        int pathCount = buffer.getInt();
+        System.out.println(pathCount + " nodes to load");
+        for (int i = 0; i < pathCount; i++)
+        {
+            IPositionable position = PathIO.load(buffer);
+            MapSolver.addPathPoint(position);
         }
 
         return tiles;

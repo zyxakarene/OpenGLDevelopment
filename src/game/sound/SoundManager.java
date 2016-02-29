@@ -1,56 +1,82 @@
 package game.sound;
 
-import game.ai.enemies.Enemy;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import org.newdawn.slick.openal.Audio;
+import utils.constants.GameConstants;
 import utils.interfaces.IPositionable;
-
 
 public class SoundManager
 {
 
-    private static ArrayList<SoundEntity> sounds;
+    private static LinkedList<SoundEntity> availibleSounds;
+    private static SoundEntity[] occupiedSounds;
     
+    private static SoundEntity bufferEntity;
+
     public static void init() throws IOException
     {
-        sounds = new ArrayList<>();
+        availibleSounds = new LinkedList<>();
+        occupiedSounds = new SoundEntity[GameConstants.SOUND_CHANNELS];
+        
+        for (int i = 0; i < occupiedSounds.length; i++)
+        {
+            availibleSounds.add(new SoundEntity());
+        }
     }
-    
+
     public static void playSound(Sounds sound, IPositionable source)
     {
-        if (sounds.size() > 32)
+        if (availibleSounds.isEmpty())
         {
-            SoundEntity toBeRemoved = sounds.remove(0);
-            toBeRemoved.stop();
+            String msg = "Warning: %s cannot play sound %s";
+            System.out.println(String.format(msg, source, sound));
+            return;
         }
-        
+
+        bufferEntity = availibleSounds.removeFirst();
+
         Audio newAudio = SoundLoader.getAudio(sound);
-        SoundEntity newSound = new SoundEntity(newAudio, source, sound);
-        
-        sounds.add(newSound);
+        bufferEntity.set(newAudio, source, sound);
+
+        occupiedSounds[bufferEntity.id] = bufferEntity;
     }
 
     public static void update(int elapsedTime)
     {
-        for (SoundEntity soundEntity : sounds)
+        for (int i = 0; i < occupiedSounds.length; i++)
         {
-            soundEntity.update(elapsedTime);
+            bufferEntity = occupiedSounds[i];
+            if (bufferEntity != null)
+            {
+                bufferEntity.update(elapsedTime);
+            }
         }
+        
+        bufferEntity = null;
     }
 
     public static void stopSoundFrom(IPositionable source)
     {
-        SoundEntity entity;
-        for (int i = 0; i < sounds.size(); i++)
+        for (int i = 0; i < occupiedSounds.length; i++)
         {
-            entity = sounds.get(i);
-            if (entity.stopIfFrom(source))
+            bufferEntity = occupiedSounds[i];
+            if (bufferEntity != null)
             {
-                sounds.remove(i);
-                i--;
+                bufferEntity.stopIfFrom(source);
             }
-            
         }
+        
+        bufferEntity = null;
+    }
+
+    static void onSoundDone(int id)
+    {
+        bufferEntity = occupiedSounds[id];
+        availibleSounds.add(bufferEntity);
+        
+        occupiedSounds[id] = null;
+        
+        bufferEntity = null;
     }
 }

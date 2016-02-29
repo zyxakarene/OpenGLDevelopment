@@ -20,8 +20,15 @@ public class MapSolver
         allTiles = new ArrayList<>();
     }
 
+    public static void addPathPoint(IPositionable point)
+    {
+        finalPath.add(point);
+    }
+    
     public void solveForMap(Tile[][] tiles, int xStart, int yStart)
     {
+        finalPath.clear();
+        
         Tile start = tiles[xStart][yStart];
         createAllTiles(tiles);
 

@@ -7,6 +7,8 @@ import game.ai.towers.TowerManager;
 import game.camera.Camera;
 import game.control.KeyboardControl;
 import game.control.clicker.ClickRegistrator;
+import game.physics.PhysObject;
+import game.physics.PhysicsManager;
 import game.sound.SoundManager;
 import game.world.Hud;
 import game.world.io.MapLoader;
@@ -28,6 +30,7 @@ public class World implements IDrawable, IUpdateable
     private ArrayList<Doodad> doodads;
     private Tile[][] tiles;
     private Skybox skybox;
+    private ArrayList<PhysObject> phys = new ArrayList<>();
 
     public World()
     {
@@ -50,9 +53,6 @@ public class World implements IDrawable, IUpdateable
             }
         }
 
-
-        new MapSolver().solveForMap(tiles, 0, 2);
-
         KeyboardControl.listenForHolding(Keyboard.KEY_LCONTROL);
     }
 
@@ -66,6 +66,7 @@ public class World implements IDrawable, IUpdateable
 
         drawShadow();
         drawScene();
+        PhysicsManager.instance.draw();
 
         Hud.draw();
     }
@@ -81,6 +82,11 @@ public class World implements IDrawable, IUpdateable
             {
                 tiles[i][j].drawShadow();
             }
+        }
+
+        for (PhysObject physObject : phys)
+        {
+            physObject.drawShadow();
         }
 
         EnemyManager.instance.drawShadow();
@@ -102,6 +108,7 @@ public class World implements IDrawable, IUpdateable
             }
         }
 
+
         EnemyManager.instance.draw();
         TowerManager.instance.draw();
 
@@ -109,10 +116,25 @@ public class World implements IDrawable, IUpdateable
         {
             doodads.get(i).draw();
         }
+        
+        ShaderLoader.activateShader(ShaderType.PHYS);
+        for (PhysObject physObject : phys)
+        {
+            physObject.draw();
+        }
     }
 
     public void update()
     {
+        if (KeyboardControl.wasKeyPressed(Keyboard.KEY_SPACE))
+        {
+            PhysObject physObject = new PhysObject();
+            physObject.setPos(Camera.getX(), Camera.getY(), Camera.getZ());
+            phys.add(physObject);
+
+            PhysicsManager.instance.addEntity(physObject);
+        }
+
         if (KeyboardControl.wasKeyPressed(Keyboard.KEY_RETURN))
         {
             EnemyManager.instance.addEnemy();
@@ -129,8 +151,14 @@ public class World implements IDrawable, IUpdateable
     @Override
     public void update(int elapsedTime)
     {
+        PhysicsManager.instance.update(elapsedTime / 1000f);
         EnemyManager.instance.update(elapsedTime);
         TowerManager.instance.update(elapsedTime);
+
+        for (PhysObject physObject : phys)
+        {
+            physObject.update(0);
+        }
 
         AttackManager.instance.update(elapsedTime);
         SoundManager.update(elapsedTime);

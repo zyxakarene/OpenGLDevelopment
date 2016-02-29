@@ -7,5 +7,8 @@ public enum ShaderType
     HUD,
     DEBTH,
     CLICK,
-    SKYBOX;
+    SKYBOX,
+    UI,
+    LINE,
+    PHYS;
 }

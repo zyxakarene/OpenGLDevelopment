@@ -14,12 +14,7 @@ public class TextureManager
 
     public static void initTextures() throws IOException
     {
-//        add("Box001", "jpg");
-//        add("floor", "jpg");
-//        add("Plane001", "jpg");
-//        add("sample", "png");
-//        add("WoodPlank", "png");
-//        add("Tiles", "png");
+        add(TextureConstants.TILES_NORMAL, "png");
         add(TextureConstants.TILES, "png");
         add(TextureConstants.ENEMY_SET, "png");
         add(TextureConstants.SKYBOX, "png");
@@ -29,7 +24,7 @@ public class TextureManager
 
     public static void bind(String name)
     {
-        map.get(name).bind();
+        map.get(name).bind(0);
     }
 
     private static void add(String name, BufferedImage img) throws IOException
@@ -48,5 +43,10 @@ public class TextureManager
     {
         TextureImage.currentTexture = null;
         TextureImpl.unbind();
+    }
+
+    public static void bindNormal(String name)
+    {
+        map.get(name).bind(2);
     }
 }

@@ -16,7 +16,7 @@ public class SoundLoader
         }
         catch (IOException ex)
         {
-            throw new RuntimeException("Could not load resource.", ex);
+            throw new RuntimeException("Could not load sound resource: " + sound, ex);
         }
     }
 

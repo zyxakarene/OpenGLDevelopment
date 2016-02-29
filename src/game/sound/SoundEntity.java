@@ -15,12 +15,24 @@ class SoundEntity
     private Sounds soundType;
     private float timePlayed;
     private boolean stopped;
+    
+    private static int counter = 0;
+    final int id;
 
-    SoundEntity(Audio sound, IPositionable source, Sounds soundType)
+    SoundEntity()
+    {
+        id = counter;
+        counter++;
+    }
+    
+    void set(Audio sound, IPositionable source, Sounds soundType)
     {
         this.sound = sound;
         this.source = source;
         this.soundType = soundType;
+        
+        timePlayed = 0;
+        stopped = false;
     }
 
     void update(int elapsedTime)
@@ -52,23 +64,22 @@ class SoundEntity
         timePlayed += elapsedTime;
     }
 
-    void stop()
+    private void stop()
     {
         stopped = true;
         if (sound.isPlaying())
         {
             sound.stop();
         }
+        
+        SoundManager.onSoundDone(id);
     }
 
-    boolean stopIfFrom(IPositionable source)
+    void stopIfFrom(IPositionable source)
     {
         if (this.source == source)
         {
             stop();
-            return true;
         }
-
-        return stopped;
     }
 }

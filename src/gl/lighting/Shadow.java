@@ -2,6 +2,7 @@ package gl.lighting;
 
 import gl.glUtils.BufferControls;
 import gl.glUtils.GLUtils;
+import gl.shaders.PhysShader;
 import gl.shaders.SharedShaderObjects;
 import gl.shaders.ShaderLoader;
 import gl.shaders.ShaderType;
@@ -32,6 +33,9 @@ public class Shadow
         ShaderLoader.activateShader(ShaderType.DEBTH);
         Matrix4f projectionView = orthographic(width * 2.4f, height * 2.4f, 0.01f, 100f);
         SimpleDepthShader.shader().setupProjection(projectionView);
+        
+        ShaderLoader.activateShader(ShaderType.PHYS);
+        PhysShader.shader().setupLightProjection(projectionView);
 
         ShaderLoader.activateShader(ShaderType.TRANSFORM);
         TransformShader.shader().setupLightProjection(projectionView);
@@ -101,6 +105,9 @@ public class Shadow
         ShaderLoader.activateShader(ShaderType.TRANSFORM);
         TransformShader.shader().updateLightViewUniform();
 //        TransformShader.setLightDirection(pitchC, yawC, rollC);
+
+        ShaderLoader.activateShader(ShaderType.PHYS);
+        PhysShader.shader().updateLightViewUniform();
     }
 
     private static Matrix4f orthographic(float width, float height, float near, float far)

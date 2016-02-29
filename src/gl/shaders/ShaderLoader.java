@@ -26,12 +26,24 @@ public class ShaderLoader
         
         SkyboxShader skyboxShader = new SkyboxShader();
         skyboxShader.load();
+        
+        UIShader uiShader = new UIShader();
+        uiShader.load();
+        
+        LineShader lineShader = new LineShader();
+        lineShader.load();
+        
+        PhysShader physShader = new PhysShader();
+        physShader.load();
 
         shaderMap.put(ShaderType.TRANSFORM, transformShader);
         shaderMap.put(ShaderType.DEBTH, depthShader);
         shaderMap.put(ShaderType.HUD, hudShader);
         shaderMap.put(ShaderType.CLICK, clickShader);
         shaderMap.put(ShaderType.SKYBOX, skyboxShader);
+        shaderMap.put(ShaderType.UI, uiShader);
+        shaderMap.put(ShaderType.LINE, lineShader);
+        shaderMap.put(ShaderType.PHYS, physShader);
     }
 
     public static void activateShader(ShaderType shader)

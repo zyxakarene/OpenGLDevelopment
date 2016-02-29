@@ -10,4 +10,6 @@ public interface IPositionable
     public void setX(float x);
     public void setY(float y);
     public void setZ(float z);
+    
+    public void setPos(float x, float y, float z);
 }

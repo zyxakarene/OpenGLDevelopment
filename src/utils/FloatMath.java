@@ -6,6 +6,11 @@ public class FloatMath
 {
     public static final float PI = (float) Math.PI;
 
+    public static float abs(float value)
+    {
+        return Math.abs(value);
+    }
+
     public static float toRadians(float degrees)
     {
         return degrees / 180.0f * PI;
@@ -44,6 +49,11 @@ public class FloatMath
     public static float atan(float a)
     {
         return (float) Math.atan(a);
+    }
+    
+    public static float atan2(float x, float y)
+    {
+        return (float) Math.atan2(y, x);
     }
 
     public static float sqrt(float value)

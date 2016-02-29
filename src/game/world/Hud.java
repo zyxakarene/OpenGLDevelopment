@@ -31,6 +31,7 @@ import static org.lwjgl.opengl.GL42.*;
 import static org.lwjgl.opengl.GL43.*;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+import utils.constants.GameConstants;
 
 /**
  *
@@ -48,14 +49,18 @@ public class Hud
         glBindVertexArray(vao);
 
         vbo = glGenBuffers();
-
+        
+        int height = 200;
+        int width = 500;
+        int screenH = GameConstants.GAME_HEIGHT;
+        
         float vertices[] =
         {
             //  Position    Texcoords
-            -1f, -0.5f, 0.0f, 1.0f, // Top-left
-            -0.5f, -0.5f, 1.0f, 1.0f, // Top-right
-            -0.5f, -1f, 1.0f, 0.0f, // Bottom-right
-            -1f, -1f, 0.0f, 0.0f  // Bottom-left
+            0, screenH - height, 0.0f, 1.0f, // Top-left
+            width, screenH - height, 1.0f, 1.0f, // Top-right
+            width, screenH, 1.0f, 0.0f, // Bottom-right
+            0, screenH, 0.0f, 0.0f  // Bottom-left
         };
 
 

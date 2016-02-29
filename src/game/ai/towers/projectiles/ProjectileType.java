@@ -1,5 +1,7 @@
 package game.ai.towers.projectiles;
 
+import game.sound.Sounds;
+
 public enum ProjectileType
 {
 
@@ -14,5 +16,20 @@ public enum ProjectileType
         this.model = model;
         this.texture = texture;
         this.damage = damage;
+    }
+    
+    public Sounds getFlySound()
+    {
+        return ProjectileSoundManager.getFlySoundFrom(this);
+    }
+    
+    public Sounds getHitSound()
+    {
+        return ProjectileSoundManager.getHitSoundFrom(this);
+    }
+    
+    public Sounds getFireSound()
+    {
+        return ProjectileSoundManager.getFireSoundFrom(this);
     }
 }

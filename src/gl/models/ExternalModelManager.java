@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-class ExternalModelManager
+public class ExternalModelManager
 {
 
     private static String[] helper;
@@ -19,6 +21,21 @@ class ExternalModelManager
     private LinkedList<Face> faces;
     private HashMap<String, VertexTextureRow> map = new HashMap<>();
 
+    public float[] vertexData;
+    public int[] elementData;
+    
+    public void loadData(String model)
+    {
+        try
+        {
+            load(model);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(ExternalModelManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     TransformModel load(String model) throws IOException
     {
         verticies = new ArrayList<>();
@@ -117,7 +134,10 @@ class ExternalModelManager
             }
         }
 
-        return new TransformModel(toFloatArray(vertexList), toIntArray(elementList));
+        vertexData = toFloatArray(vertexList);
+        elementData = toIntArray(elementList);
+        
+        return new TransformModel(vertexData, elementData);
     }
 
     private float[] toFloatArray(LinkedList<Float> list)

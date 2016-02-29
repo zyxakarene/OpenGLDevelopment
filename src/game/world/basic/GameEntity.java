@@ -3,6 +3,7 @@ package game.world.basic;
 import gl.models.ModelManager;
 import gl.models.transforms.TransformModel;
 import gl.textures.TextureManager;
+import utils.constants.TextureConstants;
 import utils.interfaces.IClickable;
 import utils.interfaces.IDrawable;
 import utils.interfaces.IEntity;
@@ -11,11 +12,13 @@ import utils.interfaces.IShadowable;
 public abstract class GameEntity implements IDrawable, IShadowable, IClickable, IEntity
 {
     private Positioning info;
-    private TransformModel model;
+    protected TransformModel model;
     private String texture;
+    private String normal;
 
     public GameEntity()
     {
+        normal = TextureConstants.TILES_NORMAL;
         info = Positioning.getDefault();
     }
 
@@ -37,6 +40,7 @@ public abstract class GameEntity implements IDrawable, IShadowable, IClickable, 
     @Override
     public void draw()
     {
+        TextureManager.bindNormal(normal);
         TextureManager.bind(texture);
         model.setPositionInfo(info);
         model.draw();

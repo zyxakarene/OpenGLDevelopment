@@ -1,7 +1,6 @@
 package game.world.basic;
 
 import game.ai.debug.Marker;
-import game.ai.towers.projectiles.Projectile;
 import java.util.ArrayList;
 import utils.FloatMath;
 import utils.constants.GameConstants;
@@ -35,7 +34,7 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
      * the last point on its path.
      */
     protected abstract void hitEndPath();
-    
+
     protected abstract void updateEntityRotations(float rightLeft, float upDown, boolean toTheLeft);
 
     protected final void recalculateAngle()
@@ -48,6 +47,18 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
     {
         super.draw();
 
+        if (GameConstants.SHOW_ENEMY_PATH && markers == null)
+        {
+            markers = new GameEntity[getPath().size()];
+
+            for (int i = 0; i < markers.length; i++)
+            {
+                markers[i] = new Marker();
+                markers[i].setScale(FloatMath.random() * 0.1f);
+                markers[i].setPos(getPath().get(i).getX(), getPath().get(i).getY(), getPath().get(i).getZ());
+            }
+        }
+        
         if (GameConstants.SHOW_ENEMY_PATH)
         {
             for (int i = 0; i < markers.length; i++)
@@ -60,17 +71,6 @@ public abstract class MovingEntity extends GameEntity implements IUpdateable
     @Override
     public void update(int elapsedTime)
     {
-        if (GameConstants.SHOW_ENEMY_PATH && markers == null)
-        {
-            markers = new GameEntity[getPath().size()];
-
-            for (int i = 0; i < markers.length; i++)
-            {
-                markers[i] = new Marker();
-                markers[i].setPos(getPath().get(i).getX(), getPath().get(i).getY(), getPath().get(i).getZ());
-            }
-        }
-
         if (isAtTheEnd())
         {
             return;

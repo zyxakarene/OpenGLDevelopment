@@ -12,6 +12,7 @@ public class GameConstants
     
     public static final Logger LOGGER = Logger.getGlobal();
     
+    public static int SOUND_CHANNELS = 64;
     public static int FPS = 60;
     public static int MS_PER_FRAME = 1000/60; //16
     
