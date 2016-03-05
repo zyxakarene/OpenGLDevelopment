@@ -10,7 +10,7 @@ import utils.interfaces.IClickable;
 public class ClickRegistrator
 {
 
-    private static final ArrayList<ClickEntry> clickables = new ArrayList<>();
+    private static final ArrayList<ClickEntry> clickables = new ArrayList<>(64);
 
     public static void register(IClickable clickable)
     {
@@ -58,14 +58,19 @@ public class ClickRegistrator
         draw();
 
         Vector3f clickColor = ClickBuffer.checkClick();
-
-        for (ClickEntry entry : clickables)
+        System.out.println("Clicked at " + clickColor);
+        int color = ColorGenerator.toRgb(clickColor);
+        if (color == 0xFFFFFF)
         {
-            if (entry.matches(clickColor))
-            {
-                entry.clickable.onClick(keyId);
-                return;
-            }
+            //Clicked white - Aka nothing
+            return;
+        }
+
+        ClickEntry clickEntry = clickables.get(color);
+        System.out.println(clickEntry);
+        if (clickEntry != null)
+        {
+            clickEntry.clickable.onClick(keyId);
         }
     }
 }

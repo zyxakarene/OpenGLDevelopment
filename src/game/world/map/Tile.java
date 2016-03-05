@@ -3,6 +3,7 @@ package game.world.map;
 import game.ai.TilePaths;
 import game.ai.towers.TowerManager;
 import game.control.clicker.ClickRegistrator;
+import game.physics.PhysicsManager;
 import game.world.basic.GameEntity;
 import org.lwjgl.util.vector.Vector3f;
 import utils.constants.TextureConstants;
@@ -34,6 +35,7 @@ public class Tile extends GameEntity
         {
             ClickRegistrator.register(this);
         }
+
     }
 
     @Override
@@ -61,5 +63,6 @@ public class Tile extends GameEntity
             path = TilePaths.getPaths(tileType);
             TilePaths.transform(path, getX(), getY(), getZ(), getPitch(), getYaw(), getRoll());
         }
+        PhysicsManager.instance.addStaticBockAt(getX(), getY(), getZ());
     }
 }

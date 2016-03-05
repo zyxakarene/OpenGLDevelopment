@@ -1,9 +1,8 @@
 package game.world.basic;
 
+import game.control.clicker.ClickRegistrator;
 import gl.models.ExternalModelManager;
-import gl.models.ModelManager;
 import gl.models.physics.PhysicsModel;
-import gl.models.transforms.TransformModel;
 import gl.textures.TextureManager;
 import utils.constants.TextureConstants;
 import utils.interfaces.IClickable;

@@ -21,4 +21,14 @@ class ColorGenerator
 
         return RESULT;
     }
+
+    static int toRgb(int r, int g, int b)
+    {
+        return ((r & 0x0ff) << 16) | ((g & 0x0ff) << 8) | (b & 0x0ff);
+    }
+
+    static int toRgb(Vector3f colors)
+    {
+        return toRgb((int) colors.x, (int) colors.y, (int) colors.z);
+    }
 }

@@ -55,6 +55,6 @@ public class PhysDebugger extends IDebugDraw
     @Override
     public int getDebugMode()
     {
-        return DebugDrawModes.MAX_DEBUG_DRAW_MODE;
+        return DebugDrawModes.DRAW_WIREFRAME;
     }
 }

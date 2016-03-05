@@ -9,8 +9,8 @@ class ClickEntry implements IDrawable
 {
 
     private static Vector3f usedColor;
-    
     final float r, g, b;
+    final int rgb;
     final int rInt, gInt, bInt;
     final IClickable clickable;
 
@@ -20,10 +20,12 @@ class ClickEntry implements IDrawable
         r = usedColor.x;
         g = usedColor.y;
         b = usedColor.z;
-        
+
         rInt = (int) (255 * r);
         gInt = (int) (255 * g);
         bInt = (int) (255 * b);
+
+        rgb = ColorGenerator.toRgb(usedColor);
 
         this.clickable = clickable;
     }
@@ -34,11 +36,11 @@ class ClickEntry implements IDrawable
         ClickShader.shader().setClickColor(r, g, b);
         clickable.drawClick();
     }
-
+    
     boolean matches(Vector3f clickColor)
     {
-        return clickColor.x == rInt &&
-                clickColor.y == gInt &&
-                clickColor.z == bInt;
+        return clickColor.x == rInt
+                && clickColor.y == gInt
+                && clickColor.z == bInt;
     }
 }

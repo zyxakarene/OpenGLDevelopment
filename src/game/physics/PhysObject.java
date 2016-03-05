@@ -1,5 +1,6 @@
 package game.physics;
 
+import game.control.clicker.ClickRegistrator;
 import game.world.basic.PhysEntity;
 import utils.constants.TextureConstants;
 import utils.constants.TowerTypes;
@@ -13,6 +14,7 @@ public class PhysObject extends PhysEntity implements IUpdateable
     {
         setModel(TowerTypes.BASE);
         setTexture(TextureConstants.TOWER_BASE);
+        ClickRegistrator.register(this);
     }
 
     @Override
@@ -24,5 +26,11 @@ public class PhysObject extends PhysEntity implements IUpdateable
     void updateFrom(float[] glMatrix)
     {
         model.physMatrix = glMatrix;
+    }
+    
+    @Override
+    public void onClick(int mouseKey)
+    {
+        PhysicsManager.instance.clicked(this);
     }
 }
